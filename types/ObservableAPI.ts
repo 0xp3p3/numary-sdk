@@ -26,9 +26,6 @@ import { ScriptResult } from '../models/ScriptResult';
 import { Stats } from '../models/Stats';
 import { StatsResponse } from '../models/StatsResponse';
 import { Transaction } from '../models/Transaction';
-import { TransactionCommitError } from '../models/TransactionCommitError';
-import { TransactionCommitErrorAllOf } from '../models/TransactionCommitErrorAllOf';
-import { TransactionCommitErrorResponse } from '../models/TransactionCommitErrorResponse';
 import { TransactionCursor } from '../models/TransactionCursor';
 import { TransactionCursorAllOf } from '../models/TransactionCursorAllOf';
 import { TransactionCursorResponse } from '../models/TransactionCursorResponse';
@@ -79,6 +76,32 @@ export class ObservableAccountsApi {
     }
 
     /**
+     * Count accounts
+     * @param ledger ledger
+     * @param after pagination cursor, will return accounts after given address (in descending order)
+     * @param address account address
+     * @param metadata metadata
+     */
+    public countAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Observable<void> {
+        const requestContextPromise = this.requestFactory.countAccounts(ledger, after, address, metadata, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (let middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (let middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.countAccounts(rsp)));
+            }));
+    }
+
+    /**
      * Get account by address
      * @param ledger ledger
      * @param accountId accountId
@@ -106,9 +129,11 @@ export class ObservableAccountsApi {
      * List all accounts
      * @param ledger ledger
      * @param after pagination cursor, will return accounts after given address (in descending order)
+     * @param address account address
+     * @param metadata account address
      */
-    public listAccounts(ledger: string, after?: string, _options?: Configuration): Observable<AccountCursorResponse> {
-        const requestContextPromise = this.requestFactory.listAccounts(ledger, after, _options);
+    public listAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Observable<AccountCursorResponse> {
+        const requestContextPromise = this.requestFactory.listAccounts(ledger, after, address, metadata, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -365,6 +390,35 @@ export class ObservableTransactionsApi {
     }
 
     /**
+     * Count transactions mathing given criteria
+     * Count transactions
+     * @param ledger ledger
+     * @param after pagination cursor, will return transactions after given txid (in descending order)
+     * @param reference find transactions by reference field
+     * @param account find transactions with postings involving given account, either as source or destination
+     * @param source find transactions with postings involving given account at source
+     * @param destination find transactions with postings involving given account at destination
+     */
+    public countTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Observable<void> {
+        const requestContextPromise = this.requestFactory.countTransactions(ledger, after, reference, account, source, destination, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (let middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (let middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.countTransactions(rsp)));
+            }));
+    }
+
+    /**
      * Create a new ledger transaction Commit a new transaction to the ledger
      * Create Transaction
      * @param ledger ledger
@@ -447,9 +501,11 @@ export class ObservableTransactionsApi {
      * @param after pagination cursor, will return transactions after given txid (in descending order)
      * @param reference find transactions by reference field
      * @param account find transactions with postings involving given account, either as source or destination
+     * @param source find transactions with postings involving given account at source
+     * @param destination find transactions with postings involving given account at destination
      */
-    public listTransactions(ledger: string, after?: string, reference?: string, account?: string, _options?: Configuration): Observable<TransactionCursorResponse> {
-        const requestContextPromise = this.requestFactory.listTransactions(ledger, after, reference, account, _options);
+    public listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Observable<TransactionCursorResponse> {
+        const requestContextPromise = this.requestFactory.listTransactions(ledger, after, reference, account, source, destination, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);

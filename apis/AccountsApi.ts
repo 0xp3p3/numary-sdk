@@ -72,8 +72,61 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
+        
+        const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
+        if (defaultAuth?.applySecurityAuthentication) {
+            await defaultAuth?.applySecurityAuthentication(requestContext);
+        }
+
+        return requestContext;
+    }
+
+    /**
+     * Count accounts
+     * @param ledger ledger
+     * @param after pagination cursor, will return accounts after given address (in descending order)
+     * @param address account address
+     * @param metadata metadata
+     */
+    public async countAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<RequestContext> {
+        let _config = _options || this.configuration;
+
+        // verify required parameter 'ledger' is not null or undefined
+        if (ledger === null || ledger === undefined) {
+            throw new RequiredError("AccountsApi", "countAccounts", "ledger");
+        }
+
+
+
+
+
+        // Path Params
+        const localVarPath = '/{ledger}/accounts'
+            .replace('{' + 'ledger' + '}', encodeURIComponent(String(ledger)));
+
+        // Make Request Context
+        const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.HEAD);
+        requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+        // Query Params
+        if (after !== undefined) {
+            requestContext.setQueryParam("after", ObjectSerializer.serialize(after, "string", ""));
+        }
+
+        // Query Params
+        if (address !== undefined) {
+            requestContext.setQueryParam("address", ObjectSerializer.serialize(address, "string", ""));
+        }
+
+        // Query Params
+        if (metadata !== undefined) {
+            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "{ [key: string]: string; }", ""));
+        }
+
+
+        let authMethod: SecurityAuthentication | undefined;
         // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
+        authMethod = _config.authMethods["basicAuth"]
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
@@ -122,11 +175,6 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
-        // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
         
         const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
         if (defaultAuth?.applySecurityAuthentication) {
@@ -140,14 +188,18 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
      * List all accounts
      * @param ledger ledger
      * @param after pagination cursor, will return accounts after given address (in descending order)
+     * @param address account address
+     * @param metadata account address
      */
-    public async listAccounts(ledger: string, after?: string, _options?: Configuration): Promise<RequestContext> {
+    public async listAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("AccountsApi", "listAccounts", "ledger");
         }
+
+
 
 
 
@@ -164,15 +216,20 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
             requestContext.setQueryParam("after", ObjectSerializer.serialize(after, "string", ""));
         }
 
+        // Query Params
+        if (address !== undefined) {
+            requestContext.setQueryParam("address", ObjectSerializer.serialize(address, "string", ""));
+        }
+
+        // Query Params
+        if (metadata !== undefined) {
+            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "{ [key: string]: string; }", ""));
+        }
+
 
         let authMethod: SecurityAuthentication | undefined;
         // Apply auth methods
         authMethod = _config.authMethods["basicAuth"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
-        // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
@@ -203,6 +260,31 @@ export class AccountsApiResponseProcessor {
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
             throw new ApiException<undefined>(response.httpStatusCode, "", undefined, response.headers);
+        }
+
+        // Work around for missing responses in specification, e.g. for petstore.yaml
+        if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+            const body: void = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "void", ""
+            ) as void;
+            return body;
+        }
+
+        throw new ApiException<string | Buffer | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+    }
+
+    /**
+     * Unwraps the actual response sent by the server from the response context and deserializes the response content
+     * to the expected objects
+     *
+     * @params response Response returned by the server for a request to countAccounts
+     * @throws ApiException if the response code was not in [200, 299]
+     */
+     public async countAccounts(response: ResponseContext): Promise<void > {
+        const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+        if (isCodeInRange("200", response.httpStatusCode)) {
+            return;
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

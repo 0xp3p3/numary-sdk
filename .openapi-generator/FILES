@@ -45,9 +45,6 @@ models/ScriptResult.ts
 models/Stats.ts
 models/StatsResponse.ts
 models/Transaction.ts
-models/TransactionCommitError.ts
-models/TransactionCommitErrorAllOf.ts
-models/TransactionCommitErrorResponse.ts
 models/TransactionCursor.ts
 models/TransactionCursorAllOf.ts
 models/TransactionCursorResponse.ts

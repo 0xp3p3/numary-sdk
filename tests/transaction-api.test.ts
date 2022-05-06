@@ -34,8 +34,14 @@ test("List transactions", async () => {
     await api.createTransaction(ledger, {
         postings: [{source: 'world', destination: 'bank', amount: 100, asset: 'USD'}]
     });
-    const ret = await api.listTransactions(ledger)
-    expect(ret.cursor.data.length).toBe(2);
+    await api.createTransaction(ledger, {
+        postings: [{source: 'bank', destination: 'user', amount: 100, asset: 'USD'}]
+    });
+    let ret = await api.listTransactions(ledger)
+    expect(ret.cursor.data.length).toBe(3);
+
+    ret = await api.listTransactions(ledger, undefined, undefined, undefined, 'bank')
+    expect(ret.cursor.data.length).toBe(1);
 });
 
 test("Revert transaction", async () => {

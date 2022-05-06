@@ -25,9 +25,6 @@ import { ScriptResult } from '../models/ScriptResult';
 import { Stats } from '../models/Stats';
 import { StatsResponse } from '../models/StatsResponse';
 import { Transaction } from '../models/Transaction';
-import { TransactionCommitError } from '../models/TransactionCommitError';
-import { TransactionCommitErrorAllOf } from '../models/TransactionCommitErrorAllOf';
-import { TransactionCommitErrorResponse } from '../models/TransactionCommitErrorResponse';
 import { TransactionCursor } from '../models/TransactionCursor';
 import { TransactionCursorAllOf } from '../models/TransactionCursorAllOf';
 import { TransactionCursorResponse } from '../models/TransactionCursorResponse';
@@ -60,6 +57,33 @@ export interface AccountsApiAddMetadataToAccountRequest {
     requestBody: { [key: string]: any; }
 }
 
+export interface AccountsApiCountAccountsRequest {
+    /**
+     * ledger
+     * @type string
+     * @memberof AccountsApicountAccounts
+     */
+    ledger: string
+    /**
+     * pagination cursor, will return accounts after given address (in descending order)
+     * @type string
+     * @memberof AccountsApicountAccounts
+     */
+    after?: string
+    /**
+     * account address
+     * @type string
+     * @memberof AccountsApicountAccounts
+     */
+    address?: string
+    /**
+     * metadata
+     * @type { [key: string]: string; }
+     * @memberof AccountsApicountAccounts
+     */
+    metadata?: { [key: string]: string; }
+}
+
 export interface AccountsApiGetAccountRequest {
     /**
      * ledger
@@ -88,6 +112,18 @@ export interface AccountsApiListAccountsRequest {
      * @memberof AccountsApilistAccounts
      */
     after?: string
+    /**
+     * account address
+     * @type string
+     * @memberof AccountsApilistAccounts
+     */
+    address?: string
+    /**
+     * account address
+     * @type { [key: string]: string; }
+     * @memberof AccountsApilistAccounts
+     */
+    metadata?: { [key: string]: string; }
 }
 
 export class ObjectAccountsApi {
@@ -106,6 +142,14 @@ export class ObjectAccountsApi {
     }
 
     /**
+     * Count accounts
+     * @param param the request object
+     */
+    public countAccounts(param: AccountsApiCountAccountsRequest, options?: Configuration): Promise<void> {
+        return this.api.countAccounts(param.ledger, param.after, param.address, param.metadata,  options).toPromise();
+    }
+
+    /**
      * Get account by address
      * @param param the request object
      */
@@ -118,7 +162,7 @@ export class ObjectAccountsApi {
      * @param param the request object
      */
     public listAccounts(param: AccountsApiListAccountsRequest, options?: Configuration): Promise<AccountCursorResponse> {
-        return this.api.listAccounts(param.ledger, param.after,  options).toPromise();
+        return this.api.listAccounts(param.ledger, param.after, param.address, param.metadata,  options).toPromise();
     }
 
 }
@@ -297,6 +341,45 @@ export interface TransactionsApiAddMetadataOnTransactionRequest {
     requestBody?: { [key: string]: any; }
 }
 
+export interface TransactionsApiCountTransactionsRequest {
+    /**
+     * ledger
+     * @type string
+     * @memberof TransactionsApicountTransactions
+     */
+    ledger: string
+    /**
+     * pagination cursor, will return transactions after given txid (in descending order)
+     * @type string
+     * @memberof TransactionsApicountTransactions
+     */
+    after?: string
+    /**
+     * find transactions by reference field
+     * @type string
+     * @memberof TransactionsApicountTransactions
+     */
+    reference?: string
+    /**
+     * find transactions with postings involving given account, either as source or destination
+     * @type string
+     * @memberof TransactionsApicountTransactions
+     */
+    account?: string
+    /**
+     * find transactions with postings involving given account at source
+     * @type string
+     * @memberof TransactionsApicountTransactions
+     */
+    source?: string
+    /**
+     * find transactions with postings involving given account at destination
+     * @type string
+     * @memberof TransactionsApicountTransactions
+     */
+    destination?: string
+}
+
 export interface TransactionsApiCreateTransactionRequest {
     /**
      * ledger
@@ -373,6 +456,18 @@ export interface TransactionsApiListTransactionsRequest {
      * @memberof TransactionsApilistTransactions
      */
     account?: string
+    /**
+     * find transactions with postings involving given account at source
+     * @type string
+     * @memberof TransactionsApilistTransactions
+     */
+    source?: string
+    /**
+     * find transactions with postings involving given account at destination
+     * @type string
+     * @memberof TransactionsApilistTransactions
+     */
+    destination?: string
 }
 
 export interface TransactionsApiRevertTransactionRequest {
@@ -404,6 +499,15 @@ export class ObjectTransactionsApi {
      */
     public addMetadataOnTransaction(param: TransactionsApiAddMetadataOnTransactionRequest, options?: Configuration): Promise<void> {
         return this.api.addMetadataOnTransaction(param.ledger, param.txid, param.requestBody,  options).toPromise();
+    }
+
+    /**
+     * Count transactions mathing given criteria
+     * Count transactions
+     * @param param the request object
+     */
+    public countTransactions(param: TransactionsApiCountTransactionsRequest, options?: Configuration): Promise<void> {
+        return this.api.countTransactions(param.ledger, param.after, param.reference, param.account, param.source, param.destination,  options).toPromise();
     }
 
     /**
@@ -439,7 +543,7 @@ export class ObjectTransactionsApi {
      * @param param the request object
      */
     public listTransactions(param: TransactionsApiListTransactionsRequest, options?: Configuration): Promise<TransactionCursorResponse> {
-        return this.api.listTransactions(param.ledger, param.after, param.reference, param.account,  options).toPromise();
+        return this.api.listTransactions(param.ledger, param.after, param.reference, param.account, param.source, param.destination,  options).toPromise();
     }
 
     /**

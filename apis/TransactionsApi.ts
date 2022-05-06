@@ -12,7 +12,6 @@ import {SecurityAuthentication} from '../auth/auth';
 
 import { CreateTransactionResponse } from '../models/CreateTransactionResponse';
 import { ErrorResponse } from '../models/ErrorResponse';
-import { TransactionCommitErrorResponse } from '../models/TransactionCommitErrorResponse';
 import { TransactionCursorResponse } from '../models/TransactionCursorResponse';
 import { TransactionData } from '../models/TransactionData';
 import { TransactionListResponse } from '../models/TransactionListResponse';
@@ -74,8 +73,76 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
+        
+        const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
+        if (defaultAuth?.applySecurityAuthentication) {
+            await defaultAuth?.applySecurityAuthentication(requestContext);
+        }
+
+        return requestContext;
+    }
+
+    /**
+     * Count transactions mathing given criteria
+     * Count transactions
+     * @param ledger ledger
+     * @param after pagination cursor, will return transactions after given txid (in descending order)
+     * @param reference find transactions by reference field
+     * @param account find transactions with postings involving given account, either as source or destination
+     * @param source find transactions with postings involving given account at source
+     * @param destination find transactions with postings involving given account at destination
+     */
+    public async countTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<RequestContext> {
+        let _config = _options || this.configuration;
+
+        // verify required parameter 'ledger' is not null or undefined
+        if (ledger === null || ledger === undefined) {
+            throw new RequiredError("TransactionsApi", "countTransactions", "ledger");
+        }
+
+
+
+
+
+
+
+        // Path Params
+        const localVarPath = '/{ledger}/transactions'
+            .replace('{' + 'ledger' + '}', encodeURIComponent(String(ledger)));
+
+        // Make Request Context
+        const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.HEAD);
+        requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+        // Query Params
+        if (after !== undefined) {
+            requestContext.setQueryParam("after", ObjectSerializer.serialize(after, "string", ""));
+        }
+
+        // Query Params
+        if (reference !== undefined) {
+            requestContext.setQueryParam("reference", ObjectSerializer.serialize(reference, "string", ""));
+        }
+
+        // Query Params
+        if (account !== undefined) {
+            requestContext.setQueryParam("account", ObjectSerializer.serialize(account, "string", ""));
+        }
+
+        // Query Params
+        if (source !== undefined) {
+            requestContext.setQueryParam("source", ObjectSerializer.serialize(source, "string", ""));
+        }
+
+        // Query Params
+        if (destination !== undefined) {
+            requestContext.setQueryParam("destination", ObjectSerializer.serialize(destination, "string", ""));
+        }
+
+
+        let authMethod: SecurityAuthentication | undefined;
         // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
+        authMethod = _config.authMethods["basicAuth"]
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
@@ -142,11 +209,6 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
-        // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
         
         const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
         if (defaultAuth?.applySecurityAuthentication) {
@@ -203,11 +265,6 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
-        // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
         
         const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
         if (defaultAuth?.applySecurityAuthentication) {
@@ -254,11 +311,6 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
-        // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
         
         const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
         if (defaultAuth?.applySecurityAuthentication) {
@@ -275,14 +327,18 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
      * @param after pagination cursor, will return transactions after given txid (in descending order)
      * @param reference find transactions by reference field
      * @param account find transactions with postings involving given account, either as source or destination
+     * @param source find transactions with postings involving given account at source
+     * @param destination find transactions with postings involving given account at destination
      */
-    public async listTransactions(ledger: string, after?: string, reference?: string, account?: string, _options?: Configuration): Promise<RequestContext> {
+    public async listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("TransactionsApi", "listTransactions", "ledger");
         }
+
+
 
 
 
@@ -311,15 +367,20 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
             requestContext.setQueryParam("account", ObjectSerializer.serialize(account, "string", ""));
         }
 
+        // Query Params
+        if (source !== undefined) {
+            requestContext.setQueryParam("source", ObjectSerializer.serialize(source, "string", ""));
+        }
+
+        // Query Params
+        if (destination !== undefined) {
+            requestContext.setQueryParam("destination", ObjectSerializer.serialize(destination, "string", ""));
+        }
+
 
         let authMethod: SecurityAuthentication | undefined;
         // Apply auth methods
         authMethod = _config.authMethods["basicAuth"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
-        // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
@@ -369,11 +430,6 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         if (authMethod?.applySecurityAuthentication) {
             await authMethod?.applySecurityAuthentication(requestContext);
         }
-        // Apply auth methods
-        authMethod = _config.authMethods["cloudToken"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
         
         const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
         if (defaultAuth?.applySecurityAuthentication) {
@@ -397,6 +453,31 @@ export class TransactionsApiResponseProcessor {
      public async addMetadataOnTransaction(response: ResponseContext): Promise<void > {
         const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
         if (isCodeInRange("204", response.httpStatusCode)) {
+            return;
+        }
+
+        // Work around for missing responses in specification, e.g. for petstore.yaml
+        if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+            const body: void = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "void", ""
+            ) as void;
+            return body;
+        }
+
+        throw new ApiException<string | Buffer | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+    }
+
+    /**
+     * Unwraps the actual response sent by the server from the response context and deserializes the response content
+     * to the expected objects
+     *
+     * @params response Response returned by the server for a request to countTransactions
+     * @throws ApiException if the response code was not in [200, 299]
+     */
+     public async countTransactions(response: ResponseContext): Promise<void > {
+        const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+        if (isCodeInRange("200", response.httpStatusCode)) {
             return;
         }
 
@@ -479,11 +560,18 @@ export class TransactionsApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            const body: TransactionCommitErrorResponse = ObjectSerializer.deserialize(
+            const body: ErrorResponse = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "TransactionCommitErrorResponse", ""
-            ) as TransactionCommitErrorResponse;
-            throw new ApiException<TransactionCommitErrorResponse>(400, "", body, response.headers);
+                "ErrorResponse", ""
+            ) as ErrorResponse;
+            throw new ApiException<ErrorResponse>(400, "Commit error", body, response.headers);
+        }
+        if (isCodeInRange("409", response.httpStatusCode)) {
+            const body: ErrorResponse = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "ErrorResponse", ""
+            ) as ErrorResponse;
+            throw new ApiException<ErrorResponse>(409, "Confict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

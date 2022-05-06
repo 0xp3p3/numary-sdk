@@ -21,9 +21,6 @@ export * from './ScriptResult';
 export * from './Stats';
 export * from './StatsResponse';
 export * from './Transaction';
-export * from './TransactionCommitError';
-export * from './TransactionCommitErrorAllOf';
-export * from './TransactionCommitErrorResponse';
 export * from './TransactionCursor';
 export * from './TransactionCursorAllOf';
 export * from './TransactionCursorResponse';
@@ -55,9 +52,6 @@ import { ScriptResult , ScriptResultErrorCodeEnum     } from './ScriptResult';
 import { Stats } from './Stats';
 import { StatsResponse } from './StatsResponse';
 import { Transaction } from './Transaction';
-import { TransactionCommitError } from './TransactionCommitError';
-import { TransactionCommitErrorAllOf } from './TransactionCommitErrorAllOf';
-import { TransactionCommitErrorResponse } from './TransactionCommitErrorResponse';
 import { TransactionCursor } from './TransactionCursor';
 import { TransactionCursorAllOf } from './TransactionCursorAllOf';
 import { TransactionCursorResponse } from './TransactionCursorResponse';
@@ -113,9 +107,6 @@ let typeMap: {[index: string]: any} = {
     "Stats": Stats,
     "StatsResponse": StatsResponse,
     "Transaction": Transaction,
-    "TransactionCommitError": TransactionCommitError,
-    "TransactionCommitErrorAllOf": TransactionCommitErrorAllOf,
-    "TransactionCommitErrorResponse": TransactionCommitErrorResponse,
     "TransactionCursor": TransactionCursor,
     "TransactionCursorAllOf": TransactionCursorAllOf,
     "TransactionCursorResponse": TransactionCursorResponse,

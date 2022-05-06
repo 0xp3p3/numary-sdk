@@ -25,9 +25,6 @@ import { ScriptResult } from '../models/ScriptResult';
 import { Stats } from '../models/Stats';
 import { StatsResponse } from '../models/StatsResponse';
 import { Transaction } from '../models/Transaction';
-import { TransactionCommitError } from '../models/TransactionCommitError';
-import { TransactionCommitErrorAllOf } from '../models/TransactionCommitErrorAllOf';
-import { TransactionCommitErrorResponse } from '../models/TransactionCommitErrorResponse';
 import { TransactionCursor } from '../models/TransactionCursor';
 import { TransactionCursorAllOf } from '../models/TransactionCursorAllOf';
 import { TransactionCursorResponse } from '../models/TransactionCursorResponse';
@@ -61,6 +58,18 @@ export class PromiseAccountsApi {
     }
 
     /**
+     * Count accounts
+     * @param ledger ledger
+     * @param after pagination cursor, will return accounts after given address (in descending order)
+     * @param address account address
+     * @param metadata metadata
+     */
+    public countAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<void> {
+        const result = this.api.countAccounts(ledger, after, address, metadata, _options);
+        return result.toPromise();
+    }
+
+    /**
      * Get account by address
      * @param ledger ledger
      * @param accountId accountId
@@ -74,9 +83,11 @@ export class PromiseAccountsApi {
      * List all accounts
      * @param ledger ledger
      * @param after pagination cursor, will return accounts after given address (in descending order)
+     * @param address account address
+     * @param metadata account address
      */
-    public listAccounts(ledger: string, after?: string, _options?: Configuration): Promise<AccountCursorResponse> {
-        const result = this.api.listAccounts(ledger, after, _options);
+    public listAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<AccountCursorResponse> {
+        const result = this.api.listAccounts(ledger, after, address, metadata, _options);
         return result.toPromise();
     }
 
@@ -240,6 +251,21 @@ export class PromiseTransactionsApi {
     }
 
     /**
+     * Count transactions mathing given criteria
+     * Count transactions
+     * @param ledger ledger
+     * @param after pagination cursor, will return transactions after given txid (in descending order)
+     * @param reference find transactions by reference field
+     * @param account find transactions with postings involving given account, either as source or destination
+     * @param source find transactions with postings involving given account at source
+     * @param destination find transactions with postings involving given account at destination
+     */
+    public countTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<void> {
+        const result = this.api.countTransactions(ledger, after, reference, account, source, destination, _options);
+        return result.toPromise();
+    }
+
+    /**
      * Create a new ledger transaction Commit a new transaction to the ledger
      * Create Transaction
      * @param ledger ledger
@@ -280,9 +306,11 @@ export class PromiseTransactionsApi {
      * @param after pagination cursor, will return transactions after given txid (in descending order)
      * @param reference find transactions by reference field
      * @param account find transactions with postings involving given account, either as source or destination
+     * @param source find transactions with postings involving given account at source
+     * @param destination find transactions with postings involving given account at destination
      */
-    public listTransactions(ledger: string, after?: string, reference?: string, account?: string, _options?: Configuration): Promise<TransactionCursorResponse> {
-        const result = this.api.listTransactions(ledger, after, reference, account, _options);
+    public listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<TransactionCursorResponse> {
+        const result = this.api.listTransactions(ledger, after, reference, account, source, destination, _options);
         return result.toPromise();
     }
 

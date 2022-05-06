@@ -49,31 +49,10 @@ export class BasicAuthAuthentication implements SecurityAuthentication {
     }
 }
 
-/**
- * Applies http authentication to the request context.
- */
-export class CloudTokenAuthentication implements SecurityAuthentication {
-    /**
-     * Configures the http authentication with the required details.
-     *
-     * @param tokenProvider service that can provide the up-to-date token when needed
-     */
-    public constructor(private tokenProvider: TokenProvider) {}
-
-    public getName(): string {
-        return "cloudToken";
-    }
-
-    public async applySecurityAuthentication(context: RequestContext) {
-        context.setHeaderParam("Authorization", "Bearer " + await this.tokenProvider.getToken());
-    }
-}
-
 
 export type AuthMethods = {
     "default"?: SecurityAuthentication,
-    "basicAuth"?: SecurityAuthentication,
-    "cloudToken"?: SecurityAuthentication
+    "basicAuth"?: SecurityAuthentication
 }
 
 export type ApiKeyConfiguration = string;
@@ -83,8 +62,7 @@ export type OAuth2Configuration = { accessToken: string };
 
 export type AuthMethodsConfiguration = {
     "default"?: SecurityAuthentication,
-    "basicAuth"?: HttpBasicConfiguration,
-    "cloudToken"?: HttpBearerConfiguration
+    "basicAuth"?: HttpBasicConfiguration
 }
 
 /**
@@ -103,12 +81,6 @@ export function configureAuthMethods(config: AuthMethodsConfiguration | undefine
         authMethods["basicAuth"] = new BasicAuthAuthentication(
             config["basicAuth"]["username"],
             config["basicAuth"]["password"]
-        );
-    }
-
-    if (config["cloudToken"]) {
-        authMethods["cloudToken"] = new CloudTokenAuthentication(
-            config["cloudToken"]["tokenProvider"]
         );
     }
 
