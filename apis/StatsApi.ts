@@ -18,7 +18,7 @@ import { StatsResponse } from '../models/StatsResponse';
 export class StatsApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account
+     * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account 
      * Get Stats
      * @param ledger name of the ledger
      */

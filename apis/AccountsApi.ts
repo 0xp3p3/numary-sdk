@@ -11,7 +11,9 @@ import {SecurityAuthentication} from '../auth/auth';
 
 
 import { GetAccount200Response } from '../models/GetAccount200Response';
+import { GetAccount400Response } from '../models/GetAccount400Response';
 import { ListAccounts200Response } from '../models/ListAccounts200Response';
+import { ListAccounts400Response } from '../models/ListAccounts400Response';
 
 /**
  * no description
@@ -21,7 +23,7 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
     /**
      * Add metadata to an account.
      * @param ledger Name of the ledger.
-     * @param address Exact address of the account.
+     * @param address Exact address of the account. It must match the following regular expressions pattern: &#x60;&#x60;&#x60; ^\\w+(:\\w+)*$ &#x60;&#x60;&#x60; 
      * @param requestBody metadata
      */
     public async addMetadataToAccount(ledger: string, address: string, requestBody: { [key: string]: any; }, _options?: Configuration): Promise<RequestContext> {
@@ -135,7 +137,7 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
     /**
      * Get account by its address.
      * @param ledger Name of the ledger.
-     * @param address Exact address of the account.
+     * @param address Exact address of the account. It must match the following regular expressions pattern: &#x60;&#x60;&#x60; ^\\w+(:\\w+)*$ &#x60;&#x60;&#x60; 
      */
     public async getAccount(ledger: string, address: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -181,17 +183,25 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
      * List accounts from a ledger, sorted by address in descending order.
      * List accounts from a ledger.
      * @param ledger Name of the ledger.
+     * @param pageSize The maximum number of results to return per page
      * @param after Pagination cursor, will return accounts after given address, in descending order.
      * @param address Filter accounts by address pattern (regular expression placed between ^ and $).
      * @param metadata Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
+     * @param balance Filter accounts by their balance (default operator is gte)
+     * @param balanceOperator Operator used for the filtering of balances can be greater than/equal, less than/equal, greater than, less than, or equal
+     * @param paginationToken Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set. 
      */
-    public async listAccounts(ledger: string, after?: string, address?: string, metadata?: any, _options?: Configuration): Promise<RequestContext> {
+    public async listAccounts(ledger: string, pageSize?: number, after?: string, address?: string, metadata?: any, balance?: number, balanceOperator?: 'gte' | 'lte' | 'gt' | 'lt' | 'e', paginationToken?: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("AccountsApi", "listAccounts", "ledger");
         }
+
+
+
+
 
 
 
@@ -206,6 +216,11 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
         requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
 
         // Query Params
+        if (pageSize !== undefined) {
+            requestContext.setQueryParam("page_size", ObjectSerializer.serialize(pageSize, "number", ""));
+        }
+
+        // Query Params
         if (after !== undefined) {
             requestContext.setQueryParam("after", ObjectSerializer.serialize(after, "string", ""));
         }
@@ -218,6 +233,21 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
         // Query Params
         if (metadata !== undefined) {
             requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "any", ""));
+        }
+
+        // Query Params
+        if (balance !== undefined) {
+            requestContext.setQueryParam("balance", ObjectSerializer.serialize(balance, "number", "int64"));
+        }
+
+        // Query Params
+        if (balanceOperator !== undefined) {
+            requestContext.setQueryParam("balance_operator", ObjectSerializer.serialize(balanceOperator, "'gte' | 'lte' | 'gt' | 'lt' | 'e'", ""));
+        }
+
+        // Query Params
+        if (paginationToken !== undefined) {
+            requestContext.setQueryParam("pagination_token", ObjectSerializer.serialize(paginationToken, "string", ""));
         }
 
 
@@ -253,7 +283,11 @@ export class AccountsApiResponseProcessor {
             return;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "", undefined, response.headers);
+            const body: GetAccount400Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "GetAccount400Response", ""
+            ) as GetAccount400Response;
+            throw new ApiException<GetAccount400Response>(400, "Bad Request", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -309,6 +343,13 @@ export class AccountsApiResponseProcessor {
             ) as GetAccount200Response;
             return body;
         }
+        if (isCodeInRange("400", response.httpStatusCode)) {
+            const body: GetAccount400Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "GetAccount400Response", ""
+            ) as GetAccount400Response;
+            throw new ApiException<GetAccount400Response>(400, "Bad Request", body, response.headers);
+        }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
@@ -337,6 +378,13 @@ export class AccountsApiResponseProcessor {
                 "ListAccounts200Response", ""
             ) as ListAccounts200Response;
             return body;
+        }
+        if (isCodeInRange("400", response.httpStatusCode)) {
+            const body: ListAccounts400Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "ListAccounts400Response", ""
+            ) as ListAccounts400Response;
+            throw new ApiException<ListAccounts400Response>(400, "Bad Request", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

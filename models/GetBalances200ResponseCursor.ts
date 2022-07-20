@@ -10,38 +10,51 @@
  * Do not edit the class manually.
  */
 
-import { Config } from './Config';
 import { HttpFile } from '../http/http';
 
-export class ConfigInfo {
-    'config': Config;
-    'server': string;
-    'version': string;
+export class GetBalances200ResponseCursor {
+    'pageSize': number;
+    'hasMore'?: boolean;
+    'previous'?: string;
+    'next'?: string;
+    'data': Array<{ [key: string]: { [key: string]: number; }; }>;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "config",
-            "baseName": "config",
-            "type": "Config",
+            "name": "pageSize",
+            "baseName": "page_size",
+            "type": "number",
             "format": ""
         },
         {
-            "name": "server",
-            "baseName": "server",
+            "name": "hasMore",
+            "baseName": "has_more",
+            "type": "boolean",
+            "format": ""
+        },
+        {
+            "name": "previous",
+            "baseName": "previous",
             "type": "string",
             "format": ""
         },
         {
-            "name": "version",
-            "baseName": "version",
+            "name": "next",
+            "baseName": "next",
             "type": "string",
+            "format": ""
+        },
+        {
+            "name": "data",
+            "baseName": "data",
+            "type": "Array<{ [key: string]: { [key: string]: number; }; }>",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return ConfigInfo.attributeTypeMap;
+        return GetBalances200ResponseCursor.attributeTypeMap;
     }
 
     public constructor() {

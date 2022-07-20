@@ -10,38 +10,30 @@
  * Do not edit the class manually.
  */
 
-import { Config } from './Config';
 import { HttpFile } from '../http/http';
 
-export class ConfigInfo {
-    'config': Config;
-    'server': string;
-    'version': string;
+export class GetBalancesAggregated400Response {
+    'errorCode': string;
+    'errorMessage'?: string;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "config",
-            "baseName": "config",
-            "type": "Config",
-            "format": ""
-        },
-        {
-            "name": "server",
-            "baseName": "server",
+            "name": "errorCode",
+            "baseName": "error_code",
             "type": "string",
             "format": ""
         },
         {
-            "name": "version",
-            "baseName": "version",
+            "name": "errorMessage",
+            "baseName": "error_message",
             "type": "string",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return ConfigInfo.attributeTypeMap;
+        return GetBalancesAggregated400Response.attributeTypeMap;
     }
 
     public constructor() {

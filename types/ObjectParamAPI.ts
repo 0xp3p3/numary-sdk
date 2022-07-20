@@ -8,17 +8,26 @@ import { Config } from '../models/Config';
 import { ConfigInfo } from '../models/ConfigInfo';
 import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
 import { Contract } from '../models/Contract';
-import { CreateTransactionResponse } from '../models/CreateTransactionResponse';
-import { CreateTransactions200Response } from '../models/CreateTransactions200Response';
-import { CreateTransactions200ResponseAllOf } from '../models/CreateTransactions200ResponseAllOf';
+import { CreateTransaction400Response } from '../models/CreateTransaction400Response';
+import { CreateTransaction409Response } from '../models/CreateTransaction409Response';
+import { CreateTransactions400Response } from '../models/CreateTransactions400Response';
 import { Cursor } from '../models/Cursor';
 import { ErrorCode } from '../models/ErrorCode';
 import { ErrorResponse } from '../models/ErrorResponse';
 import { GetAccount200Response } from '../models/GetAccount200Response';
+import { GetAccount400Response } from '../models/GetAccount400Response';
+import { GetBalances200Response } from '../models/GetBalances200Response';
+import { GetBalances200ResponseCursor } from '../models/GetBalances200ResponseCursor';
+import { GetBalances200ResponseCursorAllOf } from '../models/GetBalances200ResponseCursorAllOf';
+import { GetBalancesAggregated200Response } from '../models/GetBalancesAggregated200Response';
+import { GetBalancesAggregated400Response } from '../models/GetBalancesAggregated400Response';
+import { GetTransaction400Response } from '../models/GetTransaction400Response';
+import { GetTransaction404Response } from '../models/GetTransaction404Response';
 import { LedgerStorage } from '../models/LedgerStorage';
 import { ListAccounts200Response } from '../models/ListAccounts200Response';
 import { ListAccounts200ResponseCursor } from '../models/ListAccounts200ResponseCursor';
 import { ListAccounts200ResponseCursorAllOf } from '../models/ListAccounts200ResponseCursorAllOf';
+import { ListAccounts400Response } from '../models/ListAccounts400Response';
 import { ListTransactions200Response } from '../models/ListTransactions200Response';
 import { ListTransactions200ResponseCursor } from '../models/ListTransactions200ResponseCursor';
 import { ListTransactions200ResponseCursorAllOf } from '../models/ListTransactions200ResponseCursorAllOf';
@@ -33,6 +42,8 @@ import { Transaction } from '../models/Transaction';
 import { TransactionData } from '../models/TransactionData';
 import { TransactionResponse } from '../models/TransactionResponse';
 import { Transactions } from '../models/Transactions';
+import { TransactionsResponse } from '../models/TransactionsResponse';
+import { Volume } from '../models/Volume';
 
 import { ObservableAccountsApi } from "./ObservableAPI";
 import { AccountsApiRequestFactory, AccountsApiResponseProcessor} from "../apis/AccountsApi";
@@ -45,7 +56,7 @@ export interface AccountsApiAddMetadataToAccountRequest {
      */
     ledger: string
     /**
-     * Exact address of the account.
+     * Exact address of the account. It must match the following regular expressions pattern: &#x60;&#x60;&#x60; ^\\w+(:\\w+)*$ &#x60;&#x60;&#x60; 
      * @type string
      * @memberof AccountsApiaddMetadataToAccount
      */
@@ -87,7 +98,7 @@ export interface AccountsApiGetAccountRequest {
      */
     ledger: string
     /**
-     * Exact address of the account.
+     * Exact address of the account. It must match the following regular expressions pattern: &#x60;&#x60;&#x60; ^\\w+(:\\w+)*$ &#x60;&#x60;&#x60; 
      * @type string
      * @memberof AccountsApigetAccount
      */
@@ -101,6 +112,12 @@ export interface AccountsApiListAccountsRequest {
      * @memberof AccountsApilistAccounts
      */
     ledger: string
+    /**
+     * The maximum number of results to return per page
+     * @type number
+     * @memberof AccountsApilistAccounts
+     */
+    pageSize?: number
     /**
      * Pagination cursor, will return accounts after given address, in descending order.
      * @type string
@@ -119,6 +136,24 @@ export interface AccountsApiListAccountsRequest {
      * @memberof AccountsApilistAccounts
      */
     metadata?: any
+    /**
+     * Filter accounts by their balance (default operator is gte)
+     * @type number
+     * @memberof AccountsApilistAccounts
+     */
+    balance?: number
+    /**
+     * Operator used for the filtering of balances can be greater than/equal, less than/equal, greater than, less than, or equal
+     * @type &#39;gte&#39; | &#39;lte&#39; | &#39;gt&#39; | &#39;lt&#39; | &#39;e&#39;
+     * @memberof AccountsApilistAccounts
+     */
+    balanceOperator?: 'gte' | 'lte' | 'gt' | 'lt' | 'e'
+    /**
+     * Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set. 
+     * @type string
+     * @memberof AccountsApilistAccounts
+     */
+    paginationToken?: string
 }
 
 export class ObjectAccountsApi {
@@ -158,7 +193,77 @@ export class ObjectAccountsApi {
      * @param param the request object
      */
     public listAccounts(param: AccountsApiListAccountsRequest, options?: Configuration): Promise<ListAccounts200Response> {
-        return this.api.listAccounts(param.ledger, param.after, param.address, param.metadata,  options).toPromise();
+        return this.api.listAccounts(param.ledger, param.pageSize, param.after, param.address, param.metadata, param.balance, param.balanceOperator, param.paginationToken,  options).toPromise();
+    }
+
+}
+
+import { ObservableBalancesApi } from "./ObservableAPI";
+import { BalancesApiRequestFactory, BalancesApiResponseProcessor} from "../apis/BalancesApi";
+
+export interface BalancesApiGetBalancesRequest {
+    /**
+     * Name of the ledger.
+     * @type string
+     * @memberof BalancesApigetBalances
+     */
+    ledger: string
+    /**
+     * Filter balances involving given account, either as source or destination.
+     * @type string
+     * @memberof BalancesApigetBalances
+     */
+    address?: string
+    /**
+     * Pagination cursor, will return accounts after given address, in descending order.
+     * @type string
+     * @memberof BalancesApigetBalances
+     */
+    after?: string
+    /**
+     * Parameter used in pagination requests.  Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results.
+     * @type string
+     * @memberof BalancesApigetBalances
+     */
+    paginationToken?: string
+}
+
+export interface BalancesApiGetBalancesAggregatedRequest {
+    /**
+     * Name of the ledger.
+     * @type string
+     * @memberof BalancesApigetBalancesAggregated
+     */
+    ledger: string
+    /**
+     * Filter balances involving given account, either as source or destination.
+     * @type string
+     * @memberof BalancesApigetBalancesAggregated
+     */
+    address?: string
+}
+
+export class ObjectBalancesApi {
+    private api: ObservableBalancesApi
+
+    public constructor(configuration: Configuration, requestFactory?: BalancesApiRequestFactory, responseProcessor?: BalancesApiResponseProcessor) {
+        this.api = new ObservableBalancesApi(configuration, requestFactory, responseProcessor);
+    }
+
+    /**
+     * Get the balances from a ledger's account
+     * @param param the request object
+     */
+    public getBalances(param: BalancesApiGetBalancesRequest, options?: Configuration): Promise<GetBalances200Response> {
+        return this.api.getBalances(param.ledger, param.address, param.after, param.paginationToken,  options).toPromise();
+    }
+
+    /**
+     * Get the aggregated balances from selected accounts
+     * @param param the request object
+     */
+    public getBalancesAggregated(param: BalancesApiGetBalancesAggregatedRequest, options?: Configuration): Promise<GetBalancesAggregated200Response> {
+        return this.api.getBalancesAggregated(param.ledger, param.address,  options).toPromise();
     }
 
 }
@@ -299,7 +404,7 @@ export class ObjectStatsApi {
     }
 
     /**
-     * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account
+     * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account 
      * Get Stats
      * @param param the request object
      */
@@ -364,6 +469,12 @@ export interface TransactionsApiCountTransactionsRequest {
      * @memberof TransactionsApicountTransactions
      */
     destination?: string
+    /**
+     * Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
+     * @type any
+     * @memberof TransactionsApicountTransactions
+     */
+    metadata?: any
 }
 
 export interface TransactionsApiCreateTransactionRequest {
@@ -425,6 +536,12 @@ export interface TransactionsApiListTransactionsRequest {
      */
     ledger: string
     /**
+     * The maximum number of results to return per page
+     * @type number
+     * @memberof TransactionsApilistTransactions
+     */
+    pageSize?: number
+    /**
      * Pagination cursor, will return transactions after given txid (in descending order).
      * @type string
      * @memberof TransactionsApilistTransactions
@@ -455,17 +572,29 @@ export interface TransactionsApiListTransactionsRequest {
      */
     destination?: string
     /**
-     * Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).
+     * Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute). 
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     startTime?: string
     /**
-     * Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).
+     * Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute). 
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     endTime?: string
+    /**
+     * Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set. 
+     * @type string
+     * @memberof TransactionsApilistTransactions
+     */
+    paginationToken?: string
+    /**
+     * Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
+     * @type any
+     * @memberof TransactionsApilistTransactions
+     */
+    metadata?: any
 }
 
 export interface TransactionsApiRevertTransactionRequest {
@@ -503,14 +632,14 @@ export class ObjectTransactionsApi {
      * @param param the request object
      */
     public countTransactions(param: TransactionsApiCountTransactionsRequest, options?: Configuration): Promise<void> {
-        return this.api.countTransactions(param.ledger, param.reference, param.account, param.source, param.destination,  options).toPromise();
+        return this.api.countTransactions(param.ledger, param.reference, param.account, param.source, param.destination, param.metadata,  options).toPromise();
     }
 
     /**
      * Create a new transaction to a ledger.
      * @param param the request object
      */
-    public createTransaction(param: TransactionsApiCreateTransactionRequest, options?: Configuration): Promise<CreateTransactionResponse> {
+    public createTransaction(param: TransactionsApiCreateTransactionRequest, options?: Configuration): Promise<TransactionsResponse> {
         return this.api.createTransaction(param.ledger, param.transactionData, param.preview,  options).toPromise();
     }
 
@@ -518,7 +647,7 @@ export class ObjectTransactionsApi {
      * Create a new batch of transactions to a ledger.
      * @param param the request object
      */
-    public createTransactions(param: TransactionsApiCreateTransactionsRequest, options?: Configuration): Promise<CreateTransactions200Response> {
+    public createTransactions(param: TransactionsApiCreateTransactionsRequest, options?: Configuration): Promise<TransactionsResponse> {
         return this.api.createTransactions(param.ledger, param.transactions,  options).toPromise();
     }
 
@@ -536,7 +665,7 @@ export class ObjectTransactionsApi {
      * @param param the request object
      */
     public listTransactions(param: TransactionsApiListTransactionsRequest, options?: Configuration): Promise<ListTransactions200Response> {
-        return this.api.listTransactions(param.ledger, param.after, param.reference, param.account, param.source, param.destination, param.startTime, param.endTime,  options).toPromise();
+        return this.api.listTransactions(param.ledger, param.pageSize, param.after, param.reference, param.account, param.source, param.destination, param.startTime, param.endTime, param.paginationToken, param.metadata,  options).toPromise();
     }
 
     /**

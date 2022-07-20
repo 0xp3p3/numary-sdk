@@ -10,7 +10,7 @@ Method | HTTP request | Description
 # **readStats**
 > StatsResponse readStats()
 
-Get ledger stats (aggregate metrics on accounts and transactions) The stats for account
+Get ledger stats (aggregate metrics on accounts and transactions) The stats for account 
 
 ### Example
 

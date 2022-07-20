@@ -1,4 +1,4 @@
-## @numaryhq/ledger-nodejs@1.0
+## @numaryhq/ledger-nodejs@v1.6.0
 
 This generator creates TypeScript/JavaScript client that utilizes fetch-api.
 
@@ -21,7 +21,7 @@ navigate to the folder of your consuming project and run one of the following co
 _published:_
 
 ```
-npm install @numaryhq/ledger-nodejs@1.0 --save
+npm install @numaryhq/ledger-nodejs@v1.6.0 --save
 ```
 
 _unPublished (not recommended):_

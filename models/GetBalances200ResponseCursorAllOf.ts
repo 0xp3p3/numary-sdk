@@ -10,38 +10,23 @@
  * Do not edit the class manually.
  */
 
-import { Config } from './Config';
 import { HttpFile } from '../http/http';
 
-export class ConfigInfo {
-    'config': Config;
-    'server': string;
-    'version': string;
+export class GetBalances200ResponseCursorAllOf {
+    'data': Array<{ [key: string]: { [key: string]: number; }; }>;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "config",
-            "baseName": "config",
-            "type": "Config",
-            "format": ""
-        },
-        {
-            "name": "server",
-            "baseName": "server",
-            "type": "string",
-            "format": ""
-        },
-        {
-            "name": "version",
-            "baseName": "version",
-            "type": "string",
+            "name": "data",
+            "baseName": "data",
+            "type": "Array<{ [key: string]: { [key: string]: number; }; }>",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return ConfigInfo.attributeTypeMap;
+        return GetBalances200ResponseCursorAllOf.attributeTypeMap;
     }
 
     public constructor() {

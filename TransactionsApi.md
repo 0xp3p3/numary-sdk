@@ -55,13 +55,15 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**204** | Empty response |  -  |
+**204** | No Content |  -  |
+**400** | Bad Request |  -  |
+**404** | Not Found |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
@@ -79,7 +81,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.countTransactions("ledger001",  "ref:001",  "users:001",  "users:001",  "users:001" ).then((data:any) => {
+apiInstance.countTransactions("ledger001",  "ref:001",  "users:001",  "users:001",  "users:001",  {} ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -94,6 +96,7 @@ Name | Type | Description  | Notes
  **account** | [**string**] | Filter transactions with postings involving given account, either as source or destination. | (optional) defaults to undefined
  **source** | [**string**] | Filter transactions with postings involving given account at source. | (optional) defaults to undefined
  **destination** | [**string**] | Filter transactions with postings involving given account at destination. | (optional) defaults to undefined
+ **metadata** | **any** | Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below. | (optional) defaults to undefined
 
 
 ### Return type
@@ -118,7 +121,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **createTransaction**
-> CreateTransactionResponse createTransaction(transactionData)
+> TransactionsResponse createTransaction(transactionData)
 
 
 ### Example
@@ -161,7 +164,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-**CreateTransactionResponse**
+**TransactionsResponse**
 
 ### Authorization
 
@@ -178,13 +181,13 @@ Name | Type | Description  | Notes
 |-------------|-------------|------------------|
 **200** | OK |  -  |
 **304** | Not modified (when preview is enabled) |  -  |
-**400** | Commit error |  -  |
-**409** | Confict |  -  |
+**400** | Bad Request |  -  |
+**409** | Conflict |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **createTransactions**
-> CreateTransactions200Response createTransactions(transactions)
+> TransactionsResponse createTransactions(transactions)
 
 
 ### Example
@@ -230,7 +233,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-**CreateTransactions200Response**
+**TransactionsResponse**
 
 ### Authorization
 
@@ -246,7 +249,7 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | OK |  -  |
-**400** | Commit error |  -  |
+**400** | Bad Request |  -  |
 **409** | Conflict |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
@@ -297,6 +300,7 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | OK |  -  |
+**400** | Bad Request |  -  |
 **404** | Not Found |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
@@ -316,7 +320,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.listTransactions("ledger001",  "1234",  "ref:001",  "users:001",  "users:001",  "users:001",  "start_time_example",  "end_time_example" ).then((data:any) => {
+apiInstance.listTransactions("ledger001",  100,  "1234",  "ref:001",  "users:001",  "users:001",  "users:001",  "start_time_example",  "end_time_example",  "aHR0cHM6Ly9nLnBhZ2UvTmVrby1SYW1lbj9zaGFyZQ==",  {} ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -327,13 +331,16 @@ apiInstance.listTransactions("ledger001",  "1234",  "ref:001",  "users:001",  "u
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **pageSize** | [**number**] | The maximum number of results to return per page | (optional) defaults to 15
  **after** | [**string**] | Pagination cursor, will return transactions after given txid (in descending order). | (optional) defaults to undefined
  **reference** | [**string**] | Find transactions by reference field. | (optional) defaults to undefined
  **account** | [**string**] | Find transactions with postings involving given account, either as source or destination. | (optional) defaults to undefined
  **source** | [**string**] | Find transactions with postings involving given account at source. | (optional) defaults to undefined
  **destination** | [**string**] | Find transactions with postings involving given account at destination. | (optional) defaults to undefined
- **startTime** | [**string**] | Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute). | (optional) defaults to undefined
- **endTime** | [**string**] | Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute). | (optional) defaults to undefined
+ **startTime** | [**string**] | Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).  | (optional) defaults to undefined
+ **endTime** | [**string**] | Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).  | (optional) defaults to undefined
+ **paginationToken** | [**string**] | Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set.  | (optional) defaults to undefined
+ **metadata** | **any** | Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below. | (optional) defaults to undefined
 
 
 ### Return type
@@ -354,6 +361,7 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | OK |  -  |
+**400** | Bad Request |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
@@ -403,6 +411,8 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | OK |  -  |
+**400** | Bad Request |  -  |
+**404** | Not Found |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 

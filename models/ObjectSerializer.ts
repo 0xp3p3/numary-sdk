@@ -4,17 +4,26 @@ export * from './Config';
 export * from './ConfigInfo';
 export * from './ConfigInfoResponse';
 export * from './Contract';
-export * from './CreateTransactionResponse';
-export * from './CreateTransactions200Response';
-export * from './CreateTransactions200ResponseAllOf';
+export * from './CreateTransaction400Response';
+export * from './CreateTransaction409Response';
+export * from './CreateTransactions400Response';
 export * from './Cursor';
 export * from './ErrorCode';
 export * from './ErrorResponse';
 export * from './GetAccount200Response';
+export * from './GetAccount400Response';
+export * from './GetBalances200Response';
+export * from './GetBalances200ResponseCursor';
+export * from './GetBalances200ResponseCursorAllOf';
+export * from './GetBalancesAggregated200Response';
+export * from './GetBalancesAggregated400Response';
+export * from './GetTransaction400Response';
+export * from './GetTransaction404Response';
 export * from './LedgerStorage';
 export * from './ListAccounts200Response';
 export * from './ListAccounts200ResponseCursor';
 export * from './ListAccounts200ResponseCursorAllOf';
+export * from './ListAccounts400Response';
 export * from './ListTransactions200Response';
 export * from './ListTransactions200ResponseCursor';
 export * from './ListTransactions200ResponseCursorAllOf';
@@ -29,6 +38,8 @@ export * from './Transaction';
 export * from './TransactionData';
 export * from './TransactionResponse';
 export * from './Transactions';
+export * from './TransactionsResponse';
+export * from './Volume';
 
 import { Account } from './Account';
 import { AccountWithVolumesAndBalances } from './AccountWithVolumesAndBalances';
@@ -36,17 +47,26 @@ import { Config } from './Config';
 import { ConfigInfo } from './ConfigInfo';
 import { ConfigInfoResponse } from './ConfigInfoResponse';
 import { Contract } from './Contract';
-import { CreateTransactionResponse } from './CreateTransactionResponse';
-import { CreateTransactions200Response } from './CreateTransactions200Response';
-import { CreateTransactions200ResponseAllOf } from './CreateTransactions200ResponseAllOf';
+import { CreateTransaction400Response } from './CreateTransaction400Response';
+import { CreateTransaction409Response } from './CreateTransaction409Response';
+import { CreateTransactions400Response } from './CreateTransactions400Response';
 import { Cursor } from './Cursor';
 import { ErrorCode } from './ErrorCode';
 import { ErrorResponse } from './ErrorResponse';
 import { GetAccount200Response } from './GetAccount200Response';
+import { GetAccount400Response } from './GetAccount400Response';
+import { GetBalances200Response } from './GetBalances200Response';
+import { GetBalances200ResponseCursor } from './GetBalances200ResponseCursor';
+import { GetBalances200ResponseCursorAllOf } from './GetBalances200ResponseCursorAllOf';
+import { GetBalancesAggregated200Response } from './GetBalancesAggregated200Response';
+import { GetBalancesAggregated400Response } from './GetBalancesAggregated400Response';
+import { GetTransaction400Response } from './GetTransaction400Response';
+import { GetTransaction404Response } from './GetTransaction404Response';
 import { LedgerStorage } from './LedgerStorage';
 import { ListAccounts200Response } from './ListAccounts200Response';
 import { ListAccounts200ResponseCursor } from './ListAccounts200ResponseCursor';
 import { ListAccounts200ResponseCursorAllOf } from './ListAccounts200ResponseCursorAllOf';
+import { ListAccounts400Response } from './ListAccounts400Response';
 import { ListTransactions200Response } from './ListTransactions200Response';
 import { ListTransactions200ResponseCursor } from './ListTransactions200ResponseCursor';
 import { ListTransactions200ResponseCursorAllOf } from './ListTransactions200ResponseCursorAllOf';
@@ -61,6 +81,8 @@ import { Transaction } from './Transaction';
 import { TransactionData } from './TransactionData';
 import { TransactionResponse } from './TransactionResponse';
 import { Transactions } from './Transactions';
+import { TransactionsResponse } from './TransactionsResponse';
+import { Volume } from './Volume';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
@@ -93,16 +115,25 @@ let typeMap: {[index: string]: any} = {
     "ConfigInfo": ConfigInfo,
     "ConfigInfoResponse": ConfigInfoResponse,
     "Contract": Contract,
-    "CreateTransactionResponse": CreateTransactionResponse,
-    "CreateTransactions200Response": CreateTransactions200Response,
-    "CreateTransactions200ResponseAllOf": CreateTransactions200ResponseAllOf,
+    "CreateTransaction400Response": CreateTransaction400Response,
+    "CreateTransaction409Response": CreateTransaction409Response,
+    "CreateTransactions400Response": CreateTransactions400Response,
     "Cursor": Cursor,
     "ErrorResponse": ErrorResponse,
     "GetAccount200Response": GetAccount200Response,
+    "GetAccount400Response": GetAccount400Response,
+    "GetBalances200Response": GetBalances200Response,
+    "GetBalances200ResponseCursor": GetBalances200ResponseCursor,
+    "GetBalances200ResponseCursorAllOf": GetBalances200ResponseCursorAllOf,
+    "GetBalancesAggregated200Response": GetBalancesAggregated200Response,
+    "GetBalancesAggregated400Response": GetBalancesAggregated400Response,
+    "GetTransaction400Response": GetTransaction400Response,
+    "GetTransaction404Response": GetTransaction404Response,
     "LedgerStorage": LedgerStorage,
     "ListAccounts200Response": ListAccounts200Response,
     "ListAccounts200ResponseCursor": ListAccounts200ResponseCursor,
     "ListAccounts200ResponseCursorAllOf": ListAccounts200ResponseCursorAllOf,
+    "ListAccounts400Response": ListAccounts400Response,
     "ListTransactions200Response": ListTransactions200Response,
     "ListTransactions200ResponseCursor": ListTransactions200ResponseCursor,
     "ListTransactions200ResponseCursorAllOf": ListTransactions200ResponseCursorAllOf,
@@ -117,6 +148,8 @@ let typeMap: {[index: string]: any} = {
     "TransactionData": TransactionData,
     "TransactionResponse": TransactionResponse,
     "Transactions": Transactions,
+    "TransactionsResponse": TransactionsResponse,
+    "Volume": Volume,
 }
 
 export class ObjectSerializer {

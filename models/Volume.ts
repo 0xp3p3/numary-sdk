@@ -10,38 +10,37 @@
  * Do not edit the class manually.
  */
 
-import { Config } from './Config';
 import { HttpFile } from '../http/http';
 
-export class ConfigInfo {
-    'config': Config;
-    'server': string;
-    'version': string;
+export class Volume {
+    'input': number;
+    'output': number;
+    'balance'?: number;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "config",
-            "baseName": "config",
-            "type": "Config",
+            "name": "input",
+            "baseName": "input",
+            "type": "number",
             "format": ""
         },
         {
-            "name": "server",
-            "baseName": "server",
-            "type": "string",
+            "name": "output",
+            "baseName": "output",
+            "type": "number",
             "format": ""
         },
         {
-            "name": "version",
-            "baseName": "version",
-            "type": "string",
+            "name": "balance",
+            "baseName": "balance",
+            "type": "number",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return ConfigInfo.attributeTypeMap;
+        return Volume.attributeTypeMap;
     }
 
     public constructor() {

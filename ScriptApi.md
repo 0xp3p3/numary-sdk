@@ -22,6 +22,10 @@ const configuration = createConfiguration();
 const apiInstance = new ScriptApi(configuration);
 
 apiInstance.runScript("ledger001",  {
+    reference: "order_1234",
+    metadata: {
+      "key": null,
+    },
     plain: `vars {
 account $user
 }

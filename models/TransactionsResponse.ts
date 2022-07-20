@@ -10,38 +10,24 @@
  * Do not edit the class manually.
  */
 
-import { Config } from './Config';
+import { Transaction } from './Transaction';
 import { HttpFile } from '../http/http';
 
-export class ConfigInfo {
-    'config': Config;
-    'server': string;
-    'version': string;
+export class TransactionsResponse {
+    'data': Array<Transaction>;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "config",
-            "baseName": "config",
-            "type": "Config",
-            "format": ""
-        },
-        {
-            "name": "server",
-            "baseName": "server",
-            "type": "string",
-            "format": ""
-        },
-        {
-            "name": "version",
-            "baseName": "version",
-            "type": "string",
+            "name": "data",
+            "baseName": "data",
+            "type": "Array<Transaction>",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return ConfigInfo.attributeTypeMap;
+        return TransactionsResponse.attributeTypeMap;
     }
 
     public constructor() {

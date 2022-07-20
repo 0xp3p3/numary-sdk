@@ -9,17 +9,26 @@ import { Config } from '../models/Config';
 import { ConfigInfo } from '../models/ConfigInfo';
 import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
 import { Contract } from '../models/Contract';
-import { CreateTransactionResponse } from '../models/CreateTransactionResponse';
-import { CreateTransactions200Response } from '../models/CreateTransactions200Response';
-import { CreateTransactions200ResponseAllOf } from '../models/CreateTransactions200ResponseAllOf';
+import { CreateTransaction400Response } from '../models/CreateTransaction400Response';
+import { CreateTransaction409Response } from '../models/CreateTransaction409Response';
+import { CreateTransactions400Response } from '../models/CreateTransactions400Response';
 import { Cursor } from '../models/Cursor';
 import { ErrorCode } from '../models/ErrorCode';
 import { ErrorResponse } from '../models/ErrorResponse';
 import { GetAccount200Response } from '../models/GetAccount200Response';
+import { GetAccount400Response } from '../models/GetAccount400Response';
+import { GetBalances200Response } from '../models/GetBalances200Response';
+import { GetBalances200ResponseCursor } from '../models/GetBalances200ResponseCursor';
+import { GetBalances200ResponseCursorAllOf } from '../models/GetBalances200ResponseCursorAllOf';
+import { GetBalancesAggregated200Response } from '../models/GetBalancesAggregated200Response';
+import { GetBalancesAggregated400Response } from '../models/GetBalancesAggregated400Response';
+import { GetTransaction400Response } from '../models/GetTransaction400Response';
+import { GetTransaction404Response } from '../models/GetTransaction404Response';
 import { LedgerStorage } from '../models/LedgerStorage';
 import { ListAccounts200Response } from '../models/ListAccounts200Response';
 import { ListAccounts200ResponseCursor } from '../models/ListAccounts200ResponseCursor';
 import { ListAccounts200ResponseCursorAllOf } from '../models/ListAccounts200ResponseCursorAllOf';
+import { ListAccounts400Response } from '../models/ListAccounts400Response';
 import { ListTransactions200Response } from '../models/ListTransactions200Response';
 import { ListTransactions200ResponseCursor } from '../models/ListTransactions200ResponseCursor';
 import { ListTransactions200ResponseCursorAllOf } from '../models/ListTransactions200ResponseCursorAllOf';
@@ -34,6 +43,8 @@ import { Transaction } from '../models/Transaction';
 import { TransactionData } from '../models/TransactionData';
 import { TransactionResponse } from '../models/TransactionResponse';
 import { Transactions } from '../models/Transactions';
+import { TransactionsResponse } from '../models/TransactionsResponse';
+import { Volume } from '../models/Volume';
 
 import { AccountsApiRequestFactory, AccountsApiResponseProcessor} from "../apis/AccountsApi";
 export class ObservableAccountsApi {
@@ -54,7 +65,7 @@ export class ObservableAccountsApi {
     /**
      * Add metadata to an account.
      * @param ledger Name of the ledger.
-     * @param address Exact address of the account.
+     * @param address Exact address of the account. It must match the following regular expressions pattern: &#x60;&#x60;&#x60; ^\\w+(:\\w+)*$ &#x60;&#x60;&#x60; 
      * @param requestBody metadata
      */
     public addMetadataToAccount(ledger: string, address: string, requestBody: { [key: string]: any; }, _options?: Configuration): Observable<void> {
@@ -104,7 +115,7 @@ export class ObservableAccountsApi {
     /**
      * Get account by its address.
      * @param ledger Name of the ledger.
-     * @param address Exact address of the account.
+     * @param address Exact address of the account. It must match the following regular expressions pattern: &#x60;&#x60;&#x60; ^\\w+(:\\w+)*$ &#x60;&#x60;&#x60; 
      */
     public getAccount(ledger: string, address: string, _options?: Configuration): Observable<GetAccount200Response> {
         const requestContextPromise = this.requestFactory.getAccount(ledger, address, _options);
@@ -129,12 +140,16 @@ export class ObservableAccountsApi {
      * List accounts from a ledger, sorted by address in descending order.
      * List accounts from a ledger.
      * @param ledger Name of the ledger.
+     * @param pageSize The maximum number of results to return per page
      * @param after Pagination cursor, will return accounts after given address, in descending order.
      * @param address Filter accounts by address pattern (regular expression placed between ^ and $).
      * @param metadata Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
+     * @param balance Filter accounts by their balance (default operator is gte)
+     * @param balanceOperator Operator used for the filtering of balances can be greater than/equal, less than/equal, greater than, less than, or equal
+     * @param paginationToken Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set. 
      */
-    public listAccounts(ledger: string, after?: string, address?: string, metadata?: any, _options?: Configuration): Observable<ListAccounts200Response> {
-        const requestContextPromise = this.requestFactory.listAccounts(ledger, after, address, metadata, _options);
+    public listAccounts(ledger: string, pageSize?: number, after?: string, address?: string, metadata?: any, balance?: number, balanceOperator?: 'gte' | 'lte' | 'gt' | 'lt' | 'e', paginationToken?: string, _options?: Configuration): Observable<ListAccounts200Response> {
+        const requestContextPromise = this.requestFactory.listAccounts(ledger, pageSize, after, address, metadata, balance, balanceOperator, paginationToken, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -149,6 +164,74 @@ export class ObservableAccountsApi {
                     middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
                 }
                 return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.listAccounts(rsp)));
+            }));
+    }
+
+}
+
+import { BalancesApiRequestFactory, BalancesApiResponseProcessor} from "../apis/BalancesApi";
+export class ObservableBalancesApi {
+    private requestFactory: BalancesApiRequestFactory;
+    private responseProcessor: BalancesApiResponseProcessor;
+    private configuration: Configuration;
+
+    public constructor(
+        configuration: Configuration,
+        requestFactory?: BalancesApiRequestFactory,
+        responseProcessor?: BalancesApiResponseProcessor
+    ) {
+        this.configuration = configuration;
+        this.requestFactory = requestFactory || new BalancesApiRequestFactory(configuration);
+        this.responseProcessor = responseProcessor || new BalancesApiResponseProcessor();
+    }
+
+    /**
+     * Get the balances from a ledger's account
+     * @param ledger Name of the ledger.
+     * @param address Filter balances involving given account, either as source or destination.
+     * @param after Pagination cursor, will return accounts after given address, in descending order.
+     * @param paginationToken Parameter used in pagination requests.  Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results.
+     */
+    public getBalances(ledger: string, address?: string, after?: string, paginationToken?: string, _options?: Configuration): Observable<GetBalances200Response> {
+        const requestContextPromise = this.requestFactory.getBalances(ledger, address, after, paginationToken, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (let middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (let middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.getBalances(rsp)));
+            }));
+    }
+
+    /**
+     * Get the aggregated balances from selected accounts
+     * @param ledger Name of the ledger.
+     * @param address Filter balances involving given account, either as source or destination.
+     */
+    public getBalancesAggregated(ledger: string, address?: string, _options?: Configuration): Observable<GetBalancesAggregated200Response> {
+        const requestContextPromise = this.requestFactory.getBalancesAggregated(ledger, address, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (let middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (let middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.getBalancesAggregated(rsp)));
             }));
     }
 
@@ -319,7 +402,7 @@ export class ObservableStatsApi {
     }
 
     /**
-     * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account
+     * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account 
      * Get Stats
      * @param ledger name of the ledger
      */
@@ -392,9 +475,10 @@ export class ObservableTransactionsApi {
      * @param account Filter transactions with postings involving given account, either as source or destination.
      * @param source Filter transactions with postings involving given account at source.
      * @param destination Filter transactions with postings involving given account at destination.
+     * @param metadata Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Observable<void> {
-        const requestContextPromise = this.requestFactory.countTransactions(ledger, reference, account, source, destination, _options);
+    public countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, metadata?: any, _options?: Configuration): Observable<void> {
+        const requestContextPromise = this.requestFactory.countTransactions(ledger, reference, account, source, destination, metadata, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -418,7 +502,7 @@ export class ObservableTransactionsApi {
      * @param transactionData 
      * @param preview Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker.
      */
-    public createTransaction(ledger: string, transactionData: TransactionData, preview?: boolean, _options?: Configuration): Observable<CreateTransactionResponse> {
+    public createTransaction(ledger: string, transactionData: TransactionData, preview?: boolean, _options?: Configuration): Observable<TransactionsResponse> {
         const requestContextPromise = this.requestFactory.createTransaction(ledger, transactionData, preview, _options);
 
         // build promise chain
@@ -442,7 +526,7 @@ export class ObservableTransactionsApi {
      * @param ledger Name of the ledger.
      * @param transactions 
      */
-    public createTransactions(ledger: string, transactions: Transactions, _options?: Configuration): Observable<CreateTransactions200Response> {
+    public createTransactions(ledger: string, transactions: Transactions, _options?: Configuration): Observable<TransactionsResponse> {
         const requestContextPromise = this.requestFactory.createTransactions(ledger, transactions, _options);
 
         // build promise chain
@@ -489,16 +573,19 @@ export class ObservableTransactionsApi {
      * List transactions from a ledger, sorted by txid in descending order.
      * List transactions from a ledger.
      * @param ledger Name of the ledger.
+     * @param pageSize The maximum number of results to return per page
      * @param after Pagination cursor, will return transactions after given txid (in descending order).
      * @param reference Find transactions by reference field.
      * @param account Find transactions with postings involving given account, either as source or destination.
      * @param source Find transactions with postings involving given account at source.
      * @param destination Find transactions with postings involving given account at destination.
-     * @param startTime Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).
-     * @param endTime Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).
+     * @param startTime Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute). 
+     * @param endTime Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute). 
+     * @param paginationToken Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set. 
+     * @param metadata Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, startTime?: string, endTime?: string, _options?: Configuration): Observable<ListTransactions200Response> {
-        const requestContextPromise = this.requestFactory.listTransactions(ledger, after, reference, account, source, destination, startTime, endTime, _options);
+    public listTransactions(ledger: string, pageSize?: number, after?: string, reference?: string, account?: string, source?: string, destination?: string, startTime?: string, endTime?: string, paginationToken?: string, metadata?: any, _options?: Configuration): Observable<ListTransactions200Response> {
+        const requestContextPromise = this.requestFactory.listTransactions(ledger, pageSize, after, reference, account, source, destination, startTime, endTime, paginationToken, metadata, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);

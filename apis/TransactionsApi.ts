@@ -10,13 +10,17 @@ import {canConsumeForm, isCodeInRange} from '../util';
 import {SecurityAuthentication} from '../auth/auth';
 
 
-import { CreateTransactionResponse } from '../models/CreateTransactionResponse';
-import { CreateTransactions200Response } from '../models/CreateTransactions200Response';
-import { ErrorResponse } from '../models/ErrorResponse';
+import { CreateTransaction400Response } from '../models/CreateTransaction400Response';
+import { CreateTransaction409Response } from '../models/CreateTransaction409Response';
+import { CreateTransactions400Response } from '../models/CreateTransactions400Response';
+import { GetTransaction400Response } from '../models/GetTransaction400Response';
+import { GetTransaction404Response } from '../models/GetTransaction404Response';
+import { ListAccounts400Response } from '../models/ListAccounts400Response';
 import { ListTransactions200Response } from '../models/ListTransactions200Response';
 import { TransactionData } from '../models/TransactionData';
 import { TransactionResponse } from '../models/TransactionResponse';
 import { Transactions } from '../models/Transactions';
+import { TransactionsResponse } from '../models/TransactionsResponse';
 
 /**
  * no description
@@ -88,14 +92,16 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
      * @param account Filter transactions with postings involving given account, either as source or destination.
      * @param source Filter transactions with postings involving given account at source.
      * @param destination Filter transactions with postings involving given account at destination.
+     * @param metadata Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public async countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<RequestContext> {
+    public async countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, metadata?: any, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("TransactionsApi", "countTransactions", "ledger");
         }
+
 
 
 
@@ -128,6 +134,11 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         // Query Params
         if (destination !== undefined) {
             requestContext.setQueryParam("destination", ObjectSerializer.serialize(destination, "string", ""));
+        }
+
+        // Query Params
+        if (metadata !== undefined) {
+            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "any", ""));
         }
 
 
@@ -312,21 +323,27 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
      * List transactions from a ledger, sorted by txid in descending order.
      * List transactions from a ledger.
      * @param ledger Name of the ledger.
+     * @param pageSize The maximum number of results to return per page
      * @param after Pagination cursor, will return transactions after given txid (in descending order).
      * @param reference Find transactions by reference field.
      * @param account Find transactions with postings involving given account, either as source or destination.
      * @param source Find transactions with postings involving given account at source.
      * @param destination Find transactions with postings involving given account at destination.
-     * @param startTime Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).
-     * @param endTime Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).
+     * @param startTime Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute). 
+     * @param endTime Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute). 
+     * @param paginationToken Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set. 
+     * @param metadata Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public async listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, startTime?: string, endTime?: string, _options?: Configuration): Promise<RequestContext> {
+    public async listTransactions(ledger: string, pageSize?: number, after?: string, reference?: string, account?: string, source?: string, destination?: string, startTime?: string, endTime?: string, paginationToken?: string, metadata?: any, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("TransactionsApi", "listTransactions", "ledger");
         }
+
+
+
 
 
 
@@ -343,6 +360,11 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         // Make Request Context
         const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
         requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+        // Query Params
+        if (pageSize !== undefined) {
+            requestContext.setQueryParam("page_size", ObjectSerializer.serialize(pageSize, "number", ""));
+        }
 
         // Query Params
         if (after !== undefined) {
@@ -377,6 +399,16 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         // Query Params
         if (endTime !== undefined) {
             requestContext.setQueryParam("end_time", ObjectSerializer.serialize(endTime, "string", ""));
+        }
+
+        // Query Params
+        if (paginationToken !== undefined) {
+            requestContext.setQueryParam("pagination_token", ObjectSerializer.serialize(paginationToken, "string", ""));
+        }
+
+        // Query Params
+        if (metadata !== undefined) {
+            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "any", ""));
         }
 
 
@@ -456,6 +488,20 @@ export class TransactionsApiResponseProcessor {
         if (isCodeInRange("204", response.httpStatusCode)) {
             return;
         }
+        if (isCodeInRange("400", response.httpStatusCode)) {
+            const body: GetTransaction400Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "GetTransaction400Response", ""
+            ) as GetTransaction400Response;
+            throw new ApiException<GetTransaction400Response>(400, "Bad Request", body, response.headers);
+        }
+        if (isCodeInRange("404", response.httpStatusCode)) {
+            const body: GetTransaction404Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "GetTransaction404Response", ""
+            ) as GetTransaction404Response;
+            throw new ApiException<GetTransaction404Response>(404, "Not Found", body, response.headers);
+        }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
@@ -501,43 +547,43 @@ export class TransactionsApiResponseProcessor {
      * @params response Response returned by the server for a request to createTransaction
      * @throws ApiException if the response code was not in [200, 299]
      */
-     public async createTransaction(response: ResponseContext): Promise<CreateTransactionResponse > {
+     public async createTransaction(response: ResponseContext): Promise<TransactionsResponse > {
         const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
         if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: CreateTransactionResponse = ObjectSerializer.deserialize(
+            const body: TransactionsResponse = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "CreateTransactionResponse", ""
-            ) as CreateTransactionResponse;
+                "TransactionsResponse", ""
+            ) as TransactionsResponse;
             return body;
         }
         if (isCodeInRange("304", response.httpStatusCode)) {
-            const body: CreateTransactionResponse = ObjectSerializer.deserialize(
+            const body: TransactionsResponse = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "CreateTransactionResponse", ""
-            ) as CreateTransactionResponse;
-            throw new ApiException<CreateTransactionResponse>(304, "Not modified (when preview is enabled)", body, response.headers);
+                "TransactionsResponse", ""
+            ) as TransactionsResponse;
+            throw new ApiException<TransactionsResponse>(304, "Not modified (when preview is enabled)", body, response.headers);
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            const body: ErrorResponse = ObjectSerializer.deserialize(
+            const body: CreateTransaction400Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "ErrorResponse", ""
-            ) as ErrorResponse;
-            throw new ApiException<ErrorResponse>(400, "Commit error", body, response.headers);
+                "CreateTransaction400Response", ""
+            ) as CreateTransaction400Response;
+            throw new ApiException<CreateTransaction400Response>(400, "Bad Request", body, response.headers);
         }
         if (isCodeInRange("409", response.httpStatusCode)) {
-            const body: ErrorResponse = ObjectSerializer.deserialize(
+            const body: CreateTransaction409Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "ErrorResponse", ""
-            ) as ErrorResponse;
-            throw new ApiException<ErrorResponse>(409, "Confict", body, response.headers);
+                "CreateTransaction409Response", ""
+            ) as CreateTransaction409Response;
+            throw new ApiException<CreateTransaction409Response>(409, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: CreateTransactionResponse = ObjectSerializer.deserialize(
+            const body: TransactionsResponse = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "CreateTransactionResponse", ""
-            ) as CreateTransactionResponse;
+                "TransactionsResponse", ""
+            ) as TransactionsResponse;
             return body;
         }
 
@@ -551,36 +597,36 @@ export class TransactionsApiResponseProcessor {
      * @params response Response returned by the server for a request to createTransactions
      * @throws ApiException if the response code was not in [200, 299]
      */
-     public async createTransactions(response: ResponseContext): Promise<CreateTransactions200Response > {
+     public async createTransactions(response: ResponseContext): Promise<TransactionsResponse > {
         const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
         if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: CreateTransactions200Response = ObjectSerializer.deserialize(
+            const body: TransactionsResponse = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "CreateTransactions200Response", ""
-            ) as CreateTransactions200Response;
+                "TransactionsResponse", ""
+            ) as TransactionsResponse;
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            const body: ErrorResponse = ObjectSerializer.deserialize(
+            const body: CreateTransactions400Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "ErrorResponse", ""
-            ) as ErrorResponse;
-            throw new ApiException<ErrorResponse>(400, "Commit error", body, response.headers);
+                "CreateTransactions400Response", ""
+            ) as CreateTransactions400Response;
+            throw new ApiException<CreateTransactions400Response>(400, "Bad Request", body, response.headers);
         }
         if (isCodeInRange("409", response.httpStatusCode)) {
-            const body: ErrorResponse = ObjectSerializer.deserialize(
+            const body: CreateTransaction409Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "ErrorResponse", ""
-            ) as ErrorResponse;
-            throw new ApiException<ErrorResponse>(409, "Conflict", body, response.headers);
+                "CreateTransaction409Response", ""
+            ) as CreateTransaction409Response;
+            throw new ApiException<CreateTransaction409Response>(409, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: CreateTransactions200Response = ObjectSerializer.deserialize(
+            const body: TransactionsResponse = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "CreateTransactions200Response", ""
-            ) as CreateTransactions200Response;
+                "TransactionsResponse", ""
+            ) as TransactionsResponse;
             return body;
         }
 
@@ -603,12 +649,19 @@ export class TransactionsApiResponseProcessor {
             ) as TransactionResponse;
             return body;
         }
-        if (isCodeInRange("404", response.httpStatusCode)) {
-            const body: ErrorResponse = ObjectSerializer.deserialize(
+        if (isCodeInRange("400", response.httpStatusCode)) {
+            const body: GetTransaction400Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "ErrorResponse", ""
-            ) as ErrorResponse;
-            throw new ApiException<ErrorResponse>(404, "Not Found", body, response.headers);
+                "GetTransaction400Response", ""
+            ) as GetTransaction400Response;
+            throw new ApiException<GetTransaction400Response>(400, "Bad Request", body, response.headers);
+        }
+        if (isCodeInRange("404", response.httpStatusCode)) {
+            const body: GetTransaction404Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "GetTransaction404Response", ""
+            ) as GetTransaction404Response;
+            throw new ApiException<GetTransaction404Response>(404, "Not Found", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -639,6 +692,13 @@ export class TransactionsApiResponseProcessor {
             ) as ListTransactions200Response;
             return body;
         }
+        if (isCodeInRange("400", response.httpStatusCode)) {
+            const body: ListAccounts400Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "ListAccounts400Response", ""
+            ) as ListAccounts400Response;
+            throw new ApiException<ListAccounts400Response>(400, "Bad Request", body, response.headers);
+        }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
@@ -667,6 +727,20 @@ export class TransactionsApiResponseProcessor {
                 "TransactionResponse", ""
             ) as TransactionResponse;
             return body;
+        }
+        if (isCodeInRange("400", response.httpStatusCode)) {
+            const body: GetTransaction400Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "GetTransaction400Response", ""
+            ) as GetTransaction400Response;
+            throw new ApiException<GetTransaction400Response>(400, "Bad Request", body, response.headers);
+        }
+        if (isCodeInRange("404", response.httpStatusCode)) {
+            const body: GetTransaction404Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "GetTransaction404Response", ""
+            ) as GetTransaction404Response;
+            throw new ApiException<GetTransaction404Response>(404, "Not Found", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
