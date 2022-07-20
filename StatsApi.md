@@ -22,7 +22,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new StatsApi(configuration);
 
-apiInstance.readStats("ledger_example" ).then((data:any) => {
+apiInstance.readStats("ledger001" ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -32,7 +32,7 @@ apiInstance.readStats("ledger_example" ).then((data:any) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
+ **ledger** | [**string**] | name of the ledger | defaults to undefined
 
 
 ### Return type

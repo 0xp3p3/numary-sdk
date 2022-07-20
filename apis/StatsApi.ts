@@ -20,7 +20,7 @@ export class StatsApiRequestFactory extends BaseAPIRequestFactory {
     /**
      * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account
      * Get Stats
-     * @param ledger ledger
+     * @param ledger name of the ledger
      */
     public async readStats(ledger: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;

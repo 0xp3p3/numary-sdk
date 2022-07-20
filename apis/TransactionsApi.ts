@@ -11,10 +11,10 @@ import {SecurityAuthentication} from '../auth/auth';
 
 
 import { CreateTransactionResponse } from '../models/CreateTransactionResponse';
+import { CreateTransactions200Response } from '../models/CreateTransactions200Response';
 import { ErrorResponse } from '../models/ErrorResponse';
-import { TransactionCursorResponse } from '../models/TransactionCursorResponse';
+import { ListTransactions200Response } from '../models/ListTransactions200Response';
 import { TransactionData } from '../models/TransactionData';
-import { TransactionListResponse } from '../models/TransactionListResponse';
 import { TransactionResponse } from '../models/TransactionResponse';
 import { Transactions } from '../models/Transactions';
 
@@ -24,10 +24,9 @@ import { Transactions } from '../models/Transactions';
 export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Set a new metadata to a ledger transaction by transaction id
-     * Set Transaction Metadata
-     * @param ledger ledger
-     * @param txid txid
+     * Set the metadata of a transaction by its ID.
+     * @param ledger Name of the ledger.
+     * @param txid Transaction ID.
      * @param requestBody metadata
      */
     public async addMetadataOnTransaction(ledger: string, txid: number, requestBody?: { [key: string]: any; }, _options?: Configuration): Promise<RequestContext> {
@@ -83,23 +82,20 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Count transactions mathing given criteria
-     * Count transactions
-     * @param ledger ledger
-     * @param after pagination cursor, will return transactions after given txid (in descending order)
-     * @param reference find transactions by reference field
-     * @param account find transactions with postings involving given account, either as source or destination
-     * @param source find transactions with postings involving given account at source
-     * @param destination find transactions with postings involving given account at destination
+     * Count the transactions from a ledger.
+     * @param ledger Name of the ledger.
+     * @param reference Filter transactions by reference field.
+     * @param account Filter transactions with postings involving given account, either as source or destination.
+     * @param source Filter transactions with postings involving given account at source.
+     * @param destination Filter transactions with postings involving given account at destination.
      */
-    public async countTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<RequestContext> {
+    public async countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("TransactionsApi", "countTransactions", "ledger");
         }
-
 
 
 
@@ -113,11 +109,6 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
         // Make Request Context
         const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.HEAD);
         requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
-
-        // Query Params
-        if (after !== undefined) {
-            requestContext.setQueryParam("after", ObjectSerializer.serialize(after, "string", ""));
-        }
 
         // Query Params
         if (reference !== undefined) {
@@ -156,11 +147,10 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Create a new ledger transaction Commit a new transaction to the ledger
-     * Create Transaction
-     * @param ledger ledger
-     * @param transactionData transaction
-     * @param preview Preview mode
+     * Create a new transaction to a ledger.
+     * @param ledger Name of the ledger.
+     * @param transactionData 
+     * @param preview Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker.
      */
     public async createTransaction(ledger: string, transactionData: TransactionData, preview?: boolean, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -219,10 +209,9 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Create a new ledger transactions batch Commit a batch of new transactions to the ledger
-     * Create Transactions Batch
-     * @param ledger ledger
-     * @param transactions transactions
+     * Create a new batch of transactions to a ledger.
+     * @param ledger Name of the ledger.
+     * @param transactions 
      */
     public async createTransactions(ledger: string, transactions: Transactions, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -275,10 +264,9 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Get transaction by transaction id
-     * Get Transaction
-     * @param ledger ledger
-     * @param txid txid
+     * Get transaction from a ledger by its ID.
+     * @param ledger Name of the ledger.
+     * @param txid Transaction ID.
      */
     public async getTransaction(ledger: string, txid: number, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -321,22 +309,26 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Get all ledger transactions
-     * Get all Transactions
-     * @param ledger ledger
-     * @param after pagination cursor, will return transactions after given txid (in descending order)
-     * @param reference find transactions by reference field
-     * @param account find transactions with postings involving given account, either as source or destination
-     * @param source find transactions with postings involving given account at source
-     * @param destination find transactions with postings involving given account at destination
+     * List transactions from a ledger, sorted by txid in descending order.
+     * List transactions from a ledger.
+     * @param ledger Name of the ledger.
+     * @param after Pagination cursor, will return transactions after given txid (in descending order).
+     * @param reference Find transactions by reference field.
+     * @param account Find transactions with postings involving given account, either as source or destination.
+     * @param source Find transactions with postings involving given account at source.
+     * @param destination Find transactions with postings involving given account at destination.
+     * @param startTime Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).
+     * @param endTime Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).
      */
-    public async listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<RequestContext> {
+    public async listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, startTime?: string, endTime?: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("TransactionsApi", "listTransactions", "ledger");
         }
+
+
 
 
 
@@ -377,6 +369,16 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
             requestContext.setQueryParam("destination", ObjectSerializer.serialize(destination, "string", ""));
         }
 
+        // Query Params
+        if (startTime !== undefined) {
+            requestContext.setQueryParam("start_time", ObjectSerializer.serialize(startTime, "string", ""));
+        }
+
+        // Query Params
+        if (endTime !== undefined) {
+            requestContext.setQueryParam("end_time", ObjectSerializer.serialize(endTime, "string", ""));
+        }
+
 
         let authMethod: SecurityAuthentication | undefined;
         // Apply auth methods
@@ -394,10 +396,9 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Revert a ledger transaction by transaction id
-     * Revert Transaction
-     * @param ledger ledger
-     * @param txid txid
+     * Revert a ledger transaction by its ID.
+     * @param ledger Name of the ledger.
+     * @param txid Transaction ID.
      */
     public async revertTransaction(ledger: string, txid: number, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -550,13 +551,13 @@ export class TransactionsApiResponseProcessor {
      * @params response Response returned by the server for a request to createTransactions
      * @throws ApiException if the response code was not in [200, 299]
      */
-     public async createTransactions(response: ResponseContext): Promise<TransactionListResponse > {
+     public async createTransactions(response: ResponseContext): Promise<CreateTransactions200Response > {
         const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
         if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: TransactionListResponse = ObjectSerializer.deserialize(
+            const body: CreateTransactions200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "TransactionListResponse", ""
-            ) as TransactionListResponse;
+                "CreateTransactions200Response", ""
+            ) as CreateTransactions200Response;
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
@@ -571,15 +572,15 @@ export class TransactionsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "ErrorResponse", ""
             ) as ErrorResponse;
-            throw new ApiException<ErrorResponse>(409, "Confict", body, response.headers);
+            throw new ApiException<ErrorResponse>(409, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: TransactionListResponse = ObjectSerializer.deserialize(
+            const body: CreateTransactions200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "TransactionListResponse", ""
-            ) as TransactionListResponse;
+                "CreateTransactions200Response", ""
+            ) as CreateTransactions200Response;
             return body;
         }
 
@@ -629,22 +630,22 @@ export class TransactionsApiResponseProcessor {
      * @params response Response returned by the server for a request to listTransactions
      * @throws ApiException if the response code was not in [200, 299]
      */
-     public async listTransactions(response: ResponseContext): Promise<TransactionCursorResponse > {
+     public async listTransactions(response: ResponseContext): Promise<ListTransactions200Response > {
         const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
         if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: TransactionCursorResponse = ObjectSerializer.deserialize(
+            const body: ListTransactions200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "TransactionCursorResponse", ""
-            ) as TransactionCursorResponse;
+                "ListTransactions200Response", ""
+            ) as ListTransactions200Response;
             return body;
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: TransactionCursorResponse = ObjectSerializer.deserialize(
+            const body: ListTransactions200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "TransactionCursorResponse", ""
-            ) as TransactionCursorResponse;
+                "ListTransactions200Response", ""
+            ) as ListTransactions200Response;
             return body;
         }
 

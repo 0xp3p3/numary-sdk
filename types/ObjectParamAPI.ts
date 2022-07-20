@@ -3,20 +3,25 @@ import * as models from '../models/all';
 import { Configuration} from '../configuration'
 
 import { Account } from '../models/Account';
-import { AccountCursor } from '../models/AccountCursor';
-import { AccountCursorAllOf } from '../models/AccountCursorAllOf';
-import { AccountCursorResponse } from '../models/AccountCursorResponse';
-import { AccountResponse } from '../models/AccountResponse';
+import { AccountWithVolumesAndBalances } from '../models/AccountWithVolumesAndBalances';
 import { Config } from '../models/Config';
 import { ConfigInfo } from '../models/ConfigInfo';
 import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
 import { Contract } from '../models/Contract';
 import { CreateTransactionResponse } from '../models/CreateTransactionResponse';
+import { CreateTransactions200Response } from '../models/CreateTransactions200Response';
+import { CreateTransactions200ResponseAllOf } from '../models/CreateTransactions200ResponseAllOf';
 import { Cursor } from '../models/Cursor';
-import { CursorResponse } from '../models/CursorResponse';
 import { ErrorCode } from '../models/ErrorCode';
 import { ErrorResponse } from '../models/ErrorResponse';
+import { GetAccount200Response } from '../models/GetAccount200Response';
 import { LedgerStorage } from '../models/LedgerStorage';
+import { ListAccounts200Response } from '../models/ListAccounts200Response';
+import { ListAccounts200ResponseCursor } from '../models/ListAccounts200ResponseCursor';
+import { ListAccounts200ResponseCursorAllOf } from '../models/ListAccounts200ResponseCursorAllOf';
+import { ListTransactions200Response } from '../models/ListTransactions200Response';
+import { ListTransactions200ResponseCursor } from '../models/ListTransactions200ResponseCursor';
+import { ListTransactions200ResponseCursorAllOf } from '../models/ListTransactions200ResponseCursorAllOf';
 import { Mapping } from '../models/Mapping';
 import { MappingResponse } from '../models/MappingResponse';
 import { Posting } from '../models/Posting';
@@ -25,11 +30,7 @@ import { ScriptResult } from '../models/ScriptResult';
 import { Stats } from '../models/Stats';
 import { StatsResponse } from '../models/StatsResponse';
 import { Transaction } from '../models/Transaction';
-import { TransactionCursor } from '../models/TransactionCursor';
-import { TransactionCursorAllOf } from '../models/TransactionCursorAllOf';
-import { TransactionCursorResponse } from '../models/TransactionCursorResponse';
 import { TransactionData } from '../models/TransactionData';
-import { TransactionListResponse } from '../models/TransactionListResponse';
 import { TransactionResponse } from '../models/TransactionResponse';
 import { Transactions } from '../models/Transactions';
 
@@ -38,17 +39,17 @@ import { AccountsApiRequestFactory, AccountsApiResponseProcessor} from "../apis/
 
 export interface AccountsApiAddMetadataToAccountRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof AccountsApiaddMetadataToAccount
      */
     ledger: string
     /**
-     * accountId
+     * Exact address of the account.
      * @type string
      * @memberof AccountsApiaddMetadataToAccount
      */
-    accountId: string
+    address: string
     /**
      * metadata
      * @type { [key: string]: any; }
@@ -59,71 +60,65 @@ export interface AccountsApiAddMetadataToAccountRequest {
 
 export interface AccountsApiCountAccountsRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof AccountsApicountAccounts
      */
     ledger: string
     /**
-     * pagination cursor, will return accounts after given address (in descending order)
-     * @type string
-     * @memberof AccountsApicountAccounts
-     */
-    after?: string
-    /**
-     * account address
+     * Filter accounts by address pattern (regular expression placed between ^ and $).
      * @type string
      * @memberof AccountsApicountAccounts
      */
     address?: string
     /**
-     * metadata
-     * @type { [key: string]: string; }
+     * Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
+     * @type any
      * @memberof AccountsApicountAccounts
      */
-    metadata?: { [key: string]: string; }
+    metadata?: any
 }
 
 export interface AccountsApiGetAccountRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof AccountsApigetAccount
      */
     ledger: string
     /**
-     * accountId
+     * Exact address of the account.
      * @type string
      * @memberof AccountsApigetAccount
      */
-    accountId: string
+    address: string
 }
 
 export interface AccountsApiListAccountsRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof AccountsApilistAccounts
      */
     ledger: string
     /**
-     * pagination cursor, will return accounts after given address (in descending order)
+     * Pagination cursor, will return accounts after given address, in descending order.
      * @type string
      * @memberof AccountsApilistAccounts
      */
     after?: string
     /**
-     * account address
+     * Filter accounts by address pattern (regular expression placed between ^ and $).
      * @type string
      * @memberof AccountsApilistAccounts
      */
     address?: string
     /**
-     * account address
-     * @type { [key: string]: string; }
+     * Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
+     * @type any
      * @memberof AccountsApilistAccounts
      */
-    metadata?: { [key: string]: string; }
+    metadata?: any
 }
 
 export class ObjectAccountsApi {
@@ -134,34 +129,35 @@ export class ObjectAccountsApi {
     }
 
     /**
-     * Add metadata to account
+     * Add metadata to an account.
      * @param param the request object
      */
     public addMetadataToAccount(param: AccountsApiAddMetadataToAccountRequest, options?: Configuration): Promise<void> {
-        return this.api.addMetadataToAccount(param.ledger, param.accountId, param.requestBody,  options).toPromise();
+        return this.api.addMetadataToAccount(param.ledger, param.address, param.requestBody,  options).toPromise();
     }
 
     /**
-     * Count accounts
+     * Count the accounts from a ledger.
      * @param param the request object
      */
     public countAccounts(param: AccountsApiCountAccountsRequest, options?: Configuration): Promise<void> {
-        return this.api.countAccounts(param.ledger, param.after, param.address, param.metadata,  options).toPromise();
+        return this.api.countAccounts(param.ledger, param.address, param.metadata,  options).toPromise();
     }
 
     /**
-     * Get account by address
+     * Get account by its address.
      * @param param the request object
      */
-    public getAccount(param: AccountsApiGetAccountRequest, options?: Configuration): Promise<AccountResponse> {
-        return this.api.getAccount(param.ledger, param.accountId,  options).toPromise();
+    public getAccount(param: AccountsApiGetAccountRequest, options?: Configuration): Promise<GetAccount200Response> {
+        return this.api.getAccount(param.ledger, param.address,  options).toPromise();
     }
 
     /**
-     * List all accounts
+     * List accounts from a ledger, sorted by address in descending order.
+     * List accounts from a ledger.
      * @param param the request object
      */
-    public listAccounts(param: AccountsApiListAccountsRequest, options?: Configuration): Promise<AccountCursorResponse> {
+    public listAccounts(param: AccountsApiListAccountsRequest, options?: Configuration): Promise<ListAccounts200Response> {
         return this.api.listAccounts(param.ledger, param.after, param.address, param.metadata,  options).toPromise();
     }
 
@@ -172,7 +168,7 @@ import { MappingApiRequestFactory, MappingApiResponseProcessor} from "../apis/Ma
 
 export interface MappingApiGetMappingRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof MappingApigetMapping
      */
@@ -181,13 +177,13 @@ export interface MappingApiGetMappingRequest {
 
 export interface MappingApiUpdateMappingRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof MappingApiupdateMapping
      */
     ledger: string
     /**
-     * mapping
+     * 
      * @type Mapping
      * @memberof MappingApiupdateMapping
      */
@@ -202,8 +198,7 @@ export class ObjectMappingApi {
     }
 
     /**
-     * Get ledger mapping
-     * Get mapping
+     * Get the mapping of a ledger.
      * @param param the request object
      */
     public getMapping(param: MappingApiGetMappingRequest, options?: Configuration): Promise<MappingResponse> {
@@ -211,8 +206,7 @@ export class ObjectMappingApi {
     }
 
     /**
-     * Update ledger mapping
-     * Put mapping
+     * Update the mapping of a ledger.
      * @param param the request object
      */
     public updateMapping(param: MappingApiUpdateMappingRequest, options?: Configuration): Promise<MappingResponse> {
@@ -226,19 +220,19 @@ import { ScriptApiRequestFactory, ScriptApiResponseProcessor} from "../apis/Scri
 
 export interface ScriptApiRunScriptRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof ScriptApirunScript
      */
     ledger: string
     /**
-     * script
+     * 
      * @type Script
      * @memberof ScriptApirunScript
      */
     script: Script
     /**
-     * Preview mode
+     * Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker.
      * @type boolean
      * @memberof ScriptApirunScript
      */
@@ -253,8 +247,7 @@ export class ObjectScriptApi {
     }
 
     /**
-     * Execute a Numscript and create the transaction if any
-     * Execute Numscript
+     * Execute a Numscript.
      * @param param the request object
      */
     public runScript(param: ScriptApiRunScriptRequest, options?: Configuration): Promise<ScriptResult> {
@@ -277,8 +270,7 @@ export class ObjectServerApi {
     }
 
     /**
-     * Show server informations
-     * Server Info
+     * Show server information.
      * @param param the request object
      */
     public getInfo(param: ServerApiGetInfoRequest = {}, options?: Configuration): Promise<ConfigInfoResponse> {
@@ -292,7 +284,7 @@ import { StatsApiRequestFactory, StatsApiResponseProcessor} from "../apis/StatsA
 
 export interface StatsApiReadStatsRequest {
     /**
-     * ledger
+     * name of the ledger
      * @type string
      * @memberof StatsApireadStats
      */
@@ -322,13 +314,13 @@ import { TransactionsApiRequestFactory, TransactionsApiResponseProcessor} from "
 
 export interface TransactionsApiAddMetadataOnTransactionRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof TransactionsApiaddMetadataOnTransaction
      */
     ledger: string
     /**
-     * txid
+     * Transaction ID.
      * @type number
      * @memberof TransactionsApiaddMetadataOnTransaction
      */
@@ -343,37 +335,31 @@ export interface TransactionsApiAddMetadataOnTransactionRequest {
 
 export interface TransactionsApiCountTransactionsRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof TransactionsApicountTransactions
      */
     ledger: string
     /**
-     * pagination cursor, will return transactions after given txid (in descending order)
-     * @type string
-     * @memberof TransactionsApicountTransactions
-     */
-    after?: string
-    /**
-     * find transactions by reference field
+     * Filter transactions by reference field.
      * @type string
      * @memberof TransactionsApicountTransactions
      */
     reference?: string
     /**
-     * find transactions with postings involving given account, either as source or destination
+     * Filter transactions with postings involving given account, either as source or destination.
      * @type string
      * @memberof TransactionsApicountTransactions
      */
     account?: string
     /**
-     * find transactions with postings involving given account at source
+     * Filter transactions with postings involving given account at source.
      * @type string
      * @memberof TransactionsApicountTransactions
      */
     source?: string
     /**
-     * find transactions with postings involving given account at destination
+     * Filter transactions with postings involving given account at destination.
      * @type string
      * @memberof TransactionsApicountTransactions
      */
@@ -382,19 +368,19 @@ export interface TransactionsApiCountTransactionsRequest {
 
 export interface TransactionsApiCreateTransactionRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof TransactionsApicreateTransaction
      */
     ledger: string
     /**
-     * transaction
+     * 
      * @type TransactionData
      * @memberof TransactionsApicreateTransaction
      */
     transactionData: TransactionData
     /**
-     * Preview mode
+     * Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker.
      * @type boolean
      * @memberof TransactionsApicreateTransaction
      */
@@ -403,13 +389,13 @@ export interface TransactionsApiCreateTransactionRequest {
 
 export interface TransactionsApiCreateTransactionsRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof TransactionsApicreateTransactions
      */
     ledger: string
     /**
-     * transactions
+     * 
      * @type Transactions
      * @memberof TransactionsApicreateTransactions
      */
@@ -418,13 +404,13 @@ export interface TransactionsApiCreateTransactionsRequest {
 
 export interface TransactionsApiGetTransactionRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof TransactionsApigetTransaction
      */
     ledger: string
     /**
-     * txid
+     * Transaction ID.
      * @type number
      * @memberof TransactionsApigetTransaction
      */
@@ -433,52 +419,64 @@ export interface TransactionsApiGetTransactionRequest {
 
 export interface TransactionsApiListTransactionsRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     ledger: string
     /**
-     * pagination cursor, will return transactions after given txid (in descending order)
+     * Pagination cursor, will return transactions after given txid (in descending order).
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     after?: string
     /**
-     * find transactions by reference field
+     * Find transactions by reference field.
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     reference?: string
     /**
-     * find transactions with postings involving given account, either as source or destination
+     * Find transactions with postings involving given account, either as source or destination.
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     account?: string
     /**
-     * find transactions with postings involving given account at source
+     * Find transactions with postings involving given account at source.
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     source?: string
     /**
-     * find transactions with postings involving given account at destination
+     * Find transactions with postings involving given account at destination.
      * @type string
      * @memberof TransactionsApilistTransactions
      */
     destination?: string
+    /**
+     * Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).
+     * @type string
+     * @memberof TransactionsApilistTransactions
+     */
+    startTime?: string
+    /**
+     * Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).
+     * @type string
+     * @memberof TransactionsApilistTransactions
+     */
+    endTime?: string
 }
 
 export interface TransactionsApiRevertTransactionRequest {
     /**
-     * ledger
+     * Name of the ledger.
      * @type string
      * @memberof TransactionsApirevertTransaction
      */
     ledger: string
     /**
-     * txid
+     * Transaction ID.
      * @type number
      * @memberof TransactionsApirevertTransaction
      */
@@ -493,8 +491,7 @@ export class ObjectTransactionsApi {
     }
 
     /**
-     * Set a new metadata to a ledger transaction by transaction id
-     * Set Transaction Metadata
+     * Set the metadata of a transaction by its ID.
      * @param param the request object
      */
     public addMetadataOnTransaction(param: TransactionsApiAddMetadataOnTransactionRequest, options?: Configuration): Promise<void> {
@@ -502,17 +499,15 @@ export class ObjectTransactionsApi {
     }
 
     /**
-     * Count transactions mathing given criteria
-     * Count transactions
+     * Count the transactions from a ledger.
      * @param param the request object
      */
     public countTransactions(param: TransactionsApiCountTransactionsRequest, options?: Configuration): Promise<void> {
-        return this.api.countTransactions(param.ledger, param.after, param.reference, param.account, param.source, param.destination,  options).toPromise();
+        return this.api.countTransactions(param.ledger, param.reference, param.account, param.source, param.destination,  options).toPromise();
     }
 
     /**
-     * Create a new ledger transaction Commit a new transaction to the ledger
-     * Create Transaction
+     * Create a new transaction to a ledger.
      * @param param the request object
      */
     public createTransaction(param: TransactionsApiCreateTransactionRequest, options?: Configuration): Promise<CreateTransactionResponse> {
@@ -520,17 +515,15 @@ export class ObjectTransactionsApi {
     }
 
     /**
-     * Create a new ledger transactions batch Commit a batch of new transactions to the ledger
-     * Create Transactions Batch
+     * Create a new batch of transactions to a ledger.
      * @param param the request object
      */
-    public createTransactions(param: TransactionsApiCreateTransactionsRequest, options?: Configuration): Promise<TransactionListResponse> {
+    public createTransactions(param: TransactionsApiCreateTransactionsRequest, options?: Configuration): Promise<CreateTransactions200Response> {
         return this.api.createTransactions(param.ledger, param.transactions,  options).toPromise();
     }
 
     /**
-     * Get transaction by transaction id
-     * Get Transaction
+     * Get transaction from a ledger by its ID.
      * @param param the request object
      */
     public getTransaction(param: TransactionsApiGetTransactionRequest, options?: Configuration): Promise<TransactionResponse> {
@@ -538,17 +531,16 @@ export class ObjectTransactionsApi {
     }
 
     /**
-     * Get all ledger transactions
-     * Get all Transactions
+     * List transactions from a ledger, sorted by txid in descending order.
+     * List transactions from a ledger.
      * @param param the request object
      */
-    public listTransactions(param: TransactionsApiListTransactionsRequest, options?: Configuration): Promise<TransactionCursorResponse> {
-        return this.api.listTransactions(param.ledger, param.after, param.reference, param.account, param.source, param.destination,  options).toPromise();
+    public listTransactions(param: TransactionsApiListTransactionsRequest, options?: Configuration): Promise<ListTransactions200Response> {
+        return this.api.listTransactions(param.ledger, param.after, param.reference, param.account, param.source, param.destination, param.startTime, param.endTime,  options).toPromise();
     }
 
     /**
-     * Revert a ledger transaction by transaction id
-     * Revert Transaction
+     * Revert a ledger transaction by its ID.
      * @param param the request object
      */
     public revertTransaction(param: TransactionsApiRevertTransactionRequest, options?: Configuration): Promise<TransactionResponse> {

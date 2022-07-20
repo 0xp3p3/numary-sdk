@@ -3,20 +3,25 @@ import * as models from '../models/all';
 import { Configuration} from '../configuration'
 
 import { Account } from '../models/Account';
-import { AccountCursor } from '../models/AccountCursor';
-import { AccountCursorAllOf } from '../models/AccountCursorAllOf';
-import { AccountCursorResponse } from '../models/AccountCursorResponse';
-import { AccountResponse } from '../models/AccountResponse';
+import { AccountWithVolumesAndBalances } from '../models/AccountWithVolumesAndBalances';
 import { Config } from '../models/Config';
 import { ConfigInfo } from '../models/ConfigInfo';
 import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
 import { Contract } from '../models/Contract';
 import { CreateTransactionResponse } from '../models/CreateTransactionResponse';
+import { CreateTransactions200Response } from '../models/CreateTransactions200Response';
+import { CreateTransactions200ResponseAllOf } from '../models/CreateTransactions200ResponseAllOf';
 import { Cursor } from '../models/Cursor';
-import { CursorResponse } from '../models/CursorResponse';
 import { ErrorCode } from '../models/ErrorCode';
 import { ErrorResponse } from '../models/ErrorResponse';
+import { GetAccount200Response } from '../models/GetAccount200Response';
 import { LedgerStorage } from '../models/LedgerStorage';
+import { ListAccounts200Response } from '../models/ListAccounts200Response';
+import { ListAccounts200ResponseCursor } from '../models/ListAccounts200ResponseCursor';
+import { ListAccounts200ResponseCursorAllOf } from '../models/ListAccounts200ResponseCursorAllOf';
+import { ListTransactions200Response } from '../models/ListTransactions200Response';
+import { ListTransactions200ResponseCursor } from '../models/ListTransactions200ResponseCursor';
+import { ListTransactions200ResponseCursorAllOf } from '../models/ListTransactions200ResponseCursorAllOf';
 import { Mapping } from '../models/Mapping';
 import { MappingResponse } from '../models/MappingResponse';
 import { Posting } from '../models/Posting';
@@ -25,11 +30,7 @@ import { ScriptResult } from '../models/ScriptResult';
 import { Stats } from '../models/Stats';
 import { StatsResponse } from '../models/StatsResponse';
 import { Transaction } from '../models/Transaction';
-import { TransactionCursor } from '../models/TransactionCursor';
-import { TransactionCursorAllOf } from '../models/TransactionCursorAllOf';
-import { TransactionCursorResponse } from '../models/TransactionCursorResponse';
 import { TransactionData } from '../models/TransactionData';
-import { TransactionListResponse } from '../models/TransactionListResponse';
 import { TransactionResponse } from '../models/TransactionResponse';
 import { Transactions } from '../models/Transactions';
 import { ObservableAccountsApi } from './ObservableAPI';
@@ -47,46 +48,46 @@ export class PromiseAccountsApi {
     }
 
     /**
-     * Add metadata to account
-     * @param ledger ledger
-     * @param accountId accountId
+     * Add metadata to an account.
+     * @param ledger Name of the ledger.
+     * @param address Exact address of the account.
      * @param requestBody metadata
      */
-    public addMetadataToAccount(ledger: string, accountId: string, requestBody: { [key: string]: any; }, _options?: Configuration): Promise<void> {
-        const result = this.api.addMetadataToAccount(ledger, accountId, requestBody, _options);
+    public addMetadataToAccount(ledger: string, address: string, requestBody: { [key: string]: any; }, _options?: Configuration): Promise<void> {
+        const result = this.api.addMetadataToAccount(ledger, address, requestBody, _options);
         return result.toPromise();
     }
 
     /**
-     * Count accounts
-     * @param ledger ledger
-     * @param after pagination cursor, will return accounts after given address (in descending order)
-     * @param address account address
-     * @param metadata metadata
+     * Count the accounts from a ledger.
+     * @param ledger Name of the ledger.
+     * @param address Filter accounts by address pattern (regular expression placed between ^ and $).
+     * @param metadata Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public countAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<void> {
-        const result = this.api.countAccounts(ledger, after, address, metadata, _options);
+    public countAccounts(ledger: string, address?: string, metadata?: any, _options?: Configuration): Promise<void> {
+        const result = this.api.countAccounts(ledger, address, metadata, _options);
         return result.toPromise();
     }
 
     /**
-     * Get account by address
-     * @param ledger ledger
-     * @param accountId accountId
+     * Get account by its address.
+     * @param ledger Name of the ledger.
+     * @param address Exact address of the account.
      */
-    public getAccount(ledger: string, accountId: string, _options?: Configuration): Promise<AccountResponse> {
-        const result = this.api.getAccount(ledger, accountId, _options);
+    public getAccount(ledger: string, address: string, _options?: Configuration): Promise<GetAccount200Response> {
+        const result = this.api.getAccount(ledger, address, _options);
         return result.toPromise();
     }
 
     /**
-     * List all accounts
-     * @param ledger ledger
-     * @param after pagination cursor, will return accounts after given address (in descending order)
-     * @param address account address
-     * @param metadata account address
+     * List accounts from a ledger, sorted by address in descending order.
+     * List accounts from a ledger.
+     * @param ledger Name of the ledger.
+     * @param after Pagination cursor, will return accounts after given address, in descending order.
+     * @param address Filter accounts by address pattern (regular expression placed between ^ and $).
+     * @param metadata Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public listAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<AccountCursorResponse> {
+    public listAccounts(ledger: string, after?: string, address?: string, metadata?: any, _options?: Configuration): Promise<ListAccounts200Response> {
         const result = this.api.listAccounts(ledger, after, address, metadata, _options);
         return result.toPromise();
     }
@@ -111,9 +112,8 @@ export class PromiseMappingApi {
     }
 
     /**
-     * Get ledger mapping
-     * Get mapping
-     * @param ledger ledger
+     * Get the mapping of a ledger.
+     * @param ledger Name of the ledger.
      */
     public getMapping(ledger: string, _options?: Configuration): Promise<MappingResponse> {
         const result = this.api.getMapping(ledger, _options);
@@ -121,10 +121,9 @@ export class PromiseMappingApi {
     }
 
     /**
-     * Update ledger mapping
-     * Put mapping
-     * @param ledger ledger
-     * @param mapping mapping
+     * Update the mapping of a ledger.
+     * @param ledger Name of the ledger.
+     * @param mapping 
      */
     public updateMapping(ledger: string, mapping: Mapping, _options?: Configuration): Promise<MappingResponse> {
         const result = this.api.updateMapping(ledger, mapping, _options);
@@ -151,11 +150,10 @@ export class PromiseScriptApi {
     }
 
     /**
-     * Execute a Numscript and create the transaction if any
-     * Execute Numscript
-     * @param ledger ledger
-     * @param script script
-     * @param preview Preview mode
+     * Execute a Numscript.
+     * @param ledger Name of the ledger.
+     * @param script 
+     * @param preview Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker.
      */
     public runScript(ledger: string, script: Script, preview?: boolean, _options?: Configuration): Promise<ScriptResult> {
         const result = this.api.runScript(ledger, script, preview, _options);
@@ -182,8 +180,7 @@ export class PromiseServerApi {
     }
 
     /**
-     * Show server informations
-     * Server Info
+     * Show server information.
      */
     public getInfo(_options?: Configuration): Promise<ConfigInfoResponse> {
         const result = this.api.getInfo(_options);
@@ -212,7 +209,7 @@ export class PromiseStatsApi {
     /**
      * Get ledger stats (aggregate metrics on accounts and transactions) The stats for account
      * Get Stats
-     * @param ledger ledger
+     * @param ledger name of the ledger
      */
     public readStats(ledger: string, _options?: Configuration): Promise<StatsResponse> {
         const result = this.api.readStats(ledger, _options);
@@ -239,10 +236,9 @@ export class PromiseTransactionsApi {
     }
 
     /**
-     * Set a new metadata to a ledger transaction by transaction id
-     * Set Transaction Metadata
-     * @param ledger ledger
-     * @param txid txid
+     * Set the metadata of a transaction by its ID.
+     * @param ledger Name of the ledger.
+     * @param txid Transaction ID.
      * @param requestBody metadata
      */
     public addMetadataOnTransaction(ledger: string, txid: number, requestBody?: { [key: string]: any; }, _options?: Configuration): Promise<void> {
@@ -251,26 +247,23 @@ export class PromiseTransactionsApi {
     }
 
     /**
-     * Count transactions mathing given criteria
-     * Count transactions
-     * @param ledger ledger
-     * @param after pagination cursor, will return transactions after given txid (in descending order)
-     * @param reference find transactions by reference field
-     * @param account find transactions with postings involving given account, either as source or destination
-     * @param source find transactions with postings involving given account at source
-     * @param destination find transactions with postings involving given account at destination
+     * Count the transactions from a ledger.
+     * @param ledger Name of the ledger.
+     * @param reference Filter transactions by reference field.
+     * @param account Filter transactions with postings involving given account, either as source or destination.
+     * @param source Filter transactions with postings involving given account at source.
+     * @param destination Filter transactions with postings involving given account at destination.
      */
-    public countTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<void> {
-        const result = this.api.countTransactions(ledger, after, reference, account, source, destination, _options);
+    public countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<void> {
+        const result = this.api.countTransactions(ledger, reference, account, source, destination, _options);
         return result.toPromise();
     }
 
     /**
-     * Create a new ledger transaction Commit a new transaction to the ledger
-     * Create Transaction
-     * @param ledger ledger
-     * @param transactionData transaction
-     * @param preview Preview mode
+     * Create a new transaction to a ledger.
+     * @param ledger Name of the ledger.
+     * @param transactionData 
+     * @param preview Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker.
      */
     public createTransaction(ledger: string, transactionData: TransactionData, preview?: boolean, _options?: Configuration): Promise<CreateTransactionResponse> {
         const result = this.api.createTransaction(ledger, transactionData, preview, _options);
@@ -278,21 +271,19 @@ export class PromiseTransactionsApi {
     }
 
     /**
-     * Create a new ledger transactions batch Commit a batch of new transactions to the ledger
-     * Create Transactions Batch
-     * @param ledger ledger
-     * @param transactions transactions
+     * Create a new batch of transactions to a ledger.
+     * @param ledger Name of the ledger.
+     * @param transactions 
      */
-    public createTransactions(ledger: string, transactions: Transactions, _options?: Configuration): Promise<TransactionListResponse> {
+    public createTransactions(ledger: string, transactions: Transactions, _options?: Configuration): Promise<CreateTransactions200Response> {
         const result = this.api.createTransactions(ledger, transactions, _options);
         return result.toPromise();
     }
 
     /**
-     * Get transaction by transaction id
-     * Get Transaction
-     * @param ledger ledger
-     * @param txid txid
+     * Get transaction from a ledger by its ID.
+     * @param ledger Name of the ledger.
+     * @param txid Transaction ID.
      */
     public getTransaction(ledger: string, txid: number, _options?: Configuration): Promise<TransactionResponse> {
         const result = this.api.getTransaction(ledger, txid, _options);
@@ -300,25 +291,26 @@ export class PromiseTransactionsApi {
     }
 
     /**
-     * Get all ledger transactions
-     * Get all Transactions
-     * @param ledger ledger
-     * @param after pagination cursor, will return transactions after given txid (in descending order)
-     * @param reference find transactions by reference field
-     * @param account find transactions with postings involving given account, either as source or destination
-     * @param source find transactions with postings involving given account at source
-     * @param destination find transactions with postings involving given account at destination
+     * List transactions from a ledger, sorted by txid in descending order.
+     * List transactions from a ledger.
+     * @param ledger Name of the ledger.
+     * @param after Pagination cursor, will return transactions after given txid (in descending order).
+     * @param reference Find transactions by reference field.
+     * @param account Find transactions with postings involving given account, either as source or destination.
+     * @param source Find transactions with postings involving given account at source.
+     * @param destination Find transactions with postings involving given account at destination.
+     * @param startTime Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).
+     * @param endTime Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).
      */
-    public listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, _options?: Configuration): Promise<TransactionCursorResponse> {
-        const result = this.api.listTransactions(ledger, after, reference, account, source, destination, _options);
+    public listTransactions(ledger: string, after?: string, reference?: string, account?: string, source?: string, destination?: string, startTime?: string, endTime?: string, _options?: Configuration): Promise<ListTransactions200Response> {
+        const result = this.api.listTransactions(ledger, after, reference, account, source, destination, startTime, endTime, _options);
         return result.toPromise();
     }
 
     /**
-     * Revert a ledger transaction by transaction id
-     * Revert Transaction
-     * @param ledger ledger
-     * @param txid txid
+     * Revert a ledger transaction by its ID.
+     * @param ledger Name of the ledger.
+     * @param txid Transaction ID.
      */
     public revertTransaction(ledger: string, txid: number, _options?: Configuration): Promise<TransactionResponse> {
         const result = this.api.revertTransaction(ledger, txid, _options);

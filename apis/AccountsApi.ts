@@ -10,8 +10,8 @@ import {canConsumeForm, isCodeInRange} from '../util';
 import {SecurityAuthentication} from '../auth/auth';
 
 
-import { AccountCursorResponse } from '../models/AccountCursorResponse';
-import { AccountResponse } from '../models/AccountResponse';
+import { GetAccount200Response } from '../models/GetAccount200Response';
+import { ListAccounts200Response } from '../models/ListAccounts200Response';
 
 /**
  * no description
@@ -19,12 +19,12 @@ import { AccountResponse } from '../models/AccountResponse';
 export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Add metadata to account
-     * @param ledger ledger
-     * @param accountId accountId
+     * Add metadata to an account.
+     * @param ledger Name of the ledger.
+     * @param address Exact address of the account.
      * @param requestBody metadata
      */
-    public async addMetadataToAccount(ledger: string, accountId: string, requestBody: { [key: string]: any; }, _options?: Configuration): Promise<RequestContext> {
+    public async addMetadataToAccount(ledger: string, address: string, requestBody: { [key: string]: any; }, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
@@ -33,9 +33,9 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
         }
 
 
-        // verify required parameter 'accountId' is not null or undefined
-        if (accountId === null || accountId === undefined) {
-            throw new RequiredError("AccountsApi", "addMetadataToAccount", "accountId");
+        // verify required parameter 'address' is not null or undefined
+        if (address === null || address === undefined) {
+            throw new RequiredError("AccountsApi", "addMetadataToAccount", "address");
         }
 
 
@@ -46,9 +46,9 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/{ledger}/accounts/{accountId}/metadata'
+        const localVarPath = '/{ledger}/accounts/{address}/metadata'
             .replace('{' + 'ledger' + '}', encodeURIComponent(String(ledger)))
-            .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
+            .replace('{' + 'address' + '}', encodeURIComponent(String(address)));
 
         // Make Request Context
         const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.POST);
@@ -82,20 +82,18 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Count accounts
-     * @param ledger ledger
-     * @param after pagination cursor, will return accounts after given address (in descending order)
-     * @param address account address
-     * @param metadata metadata
+     * Count the accounts from a ledger.
+     * @param ledger Name of the ledger.
+     * @param address Filter accounts by address pattern (regular expression placed between ^ and $).
+     * @param metadata Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public async countAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<RequestContext> {
+    public async countAccounts(ledger: string, address?: string, metadata?: any, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
         if (ledger === null || ledger === undefined) {
             throw new RequiredError("AccountsApi", "countAccounts", "ledger");
         }
-
 
 
 
@@ -109,18 +107,13 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
         requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
 
         // Query Params
-        if (after !== undefined) {
-            requestContext.setQueryParam("after", ObjectSerializer.serialize(after, "string", ""));
-        }
-
-        // Query Params
         if (address !== undefined) {
             requestContext.setQueryParam("address", ObjectSerializer.serialize(address, "string", ""));
         }
 
         // Query Params
         if (metadata !== undefined) {
-            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "{ [key: string]: string; }", ""));
+            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "any", ""));
         }
 
 
@@ -140,11 +133,11 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Get account by address
-     * @param ledger ledger
-     * @param accountId accountId
+     * Get account by its address.
+     * @param ledger Name of the ledger.
+     * @param address Exact address of the account.
      */
-    public async getAccount(ledger: string, accountId: string, _options?: Configuration): Promise<RequestContext> {
+    public async getAccount(ledger: string, address: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
@@ -153,16 +146,16 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
         }
 
 
-        // verify required parameter 'accountId' is not null or undefined
-        if (accountId === null || accountId === undefined) {
-            throw new RequiredError("AccountsApi", "getAccount", "accountId");
+        // verify required parameter 'address' is not null or undefined
+        if (address === null || address === undefined) {
+            throw new RequiredError("AccountsApi", "getAccount", "address");
         }
 
 
         // Path Params
-        const localVarPath = '/{ledger}/accounts/{accountId}'
+        const localVarPath = '/{ledger}/accounts/{address}'
             .replace('{' + 'ledger' + '}', encodeURIComponent(String(ledger)))
-            .replace('{' + 'accountId' + '}', encodeURIComponent(String(accountId)));
+            .replace('{' + 'address' + '}', encodeURIComponent(String(address)));
 
         // Make Request Context
         const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
@@ -185,13 +178,14 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * List all accounts
-     * @param ledger ledger
-     * @param after pagination cursor, will return accounts after given address (in descending order)
-     * @param address account address
-     * @param metadata account address
+     * List accounts from a ledger, sorted by address in descending order.
+     * List accounts from a ledger.
+     * @param ledger Name of the ledger.
+     * @param after Pagination cursor, will return accounts after given address, in descending order.
+     * @param address Filter accounts by address pattern (regular expression placed between ^ and $).
+     * @param metadata Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
-    public async listAccounts(ledger: string, after?: string, address?: string, metadata?: { [key: string]: string; }, _options?: Configuration): Promise<RequestContext> {
+    public async listAccounts(ledger: string, after?: string, address?: string, metadata?: any, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
 
         // verify required parameter 'ledger' is not null or undefined
@@ -223,7 +217,7 @@ export class AccountsApiRequestFactory extends BaseAPIRequestFactory {
 
         // Query Params
         if (metadata !== undefined) {
-            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "{ [key: string]: string; }", ""));
+            requestContext.setQueryParam("metadata", ObjectSerializer.serialize(metadata, "any", ""));
         }
 
 
@@ -306,22 +300,22 @@ export class AccountsApiResponseProcessor {
      * @params response Response returned by the server for a request to getAccount
      * @throws ApiException if the response code was not in [200, 299]
      */
-     public async getAccount(response: ResponseContext): Promise<AccountResponse > {
+     public async getAccount(response: ResponseContext): Promise<GetAccount200Response > {
         const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
         if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: AccountResponse = ObjectSerializer.deserialize(
+            const body: GetAccount200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "AccountResponse", ""
-            ) as AccountResponse;
+                "GetAccount200Response", ""
+            ) as GetAccount200Response;
             return body;
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: AccountResponse = ObjectSerializer.deserialize(
+            const body: GetAccount200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "AccountResponse", ""
-            ) as AccountResponse;
+                "GetAccount200Response", ""
+            ) as GetAccount200Response;
             return body;
         }
 
@@ -335,22 +329,22 @@ export class AccountsApiResponseProcessor {
      * @params response Response returned by the server for a request to listAccounts
      * @throws ApiException if the response code was not in [200, 299]
      */
-     public async listAccounts(response: ResponseContext): Promise<AccountCursorResponse > {
+     public async listAccounts(response: ResponseContext): Promise<ListAccounts200Response > {
         const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
         if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: AccountCursorResponse = ObjectSerializer.deserialize(
+            const body: ListAccounts200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "AccountCursorResponse", ""
-            ) as AccountCursorResponse;
+                "ListAccounts200Response", ""
+            ) as ListAccounts200Response;
             return body;
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
         if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: AccountCursorResponse = ObjectSerializer.deserialize(
+            const body: ListAccounts200Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
-                "AccountCursorResponse", ""
-            ) as AccountCursorResponse;
+                "ListAccounts200Response", ""
+            ) as ListAccounts200Response;
             return body;
         }
 

@@ -10,11 +10,13 @@
  * Do not edit the class manually.
  */
 
+import { Account } from './Account';
 import { HttpFile } from '../http/http';
 
-export class Cursor {
+export class ListAccounts200ResponseCursor {
     'pageSize': number;
     'hasMore': boolean;
+    'data': Array<Account>;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -30,10 +32,16 @@ export class Cursor {
             "baseName": "has_more",
             "type": "boolean",
             "format": ""
+        },
+        {
+            "name": "data",
+            "baseName": "data",
+            "type": "Array<Account>",
+            "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return Cursor.attributeTypeMap;
+        return ListAccounts200ResponseCursor.attributeTypeMap;
     }
 
     public constructor() {

@@ -12,10 +12,12 @@
 
 import { HttpFile } from '../http/http';
 
-export class Account {
+export class AccountWithVolumesAndBalances {
     'address': string;
     'type'?: string;
     'metadata'?: any;
+    'volumes'?: { [key: string]: { [key: string]: number; }; };
+    'balances'?: { [key: string]: number; };
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -37,10 +39,22 @@ export class Account {
             "baseName": "metadata",
             "type": "any",
             "format": ""
+        },
+        {
+            "name": "volumes",
+            "baseName": "volumes",
+            "type": "{ [key: string]: { [key: string]: number; }; }",
+            "format": ""
+        },
+        {
+            "name": "balances",
+            "baseName": "balances",
+            "type": "{ [key: string]: number; }",
+            "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return Account.attributeTypeMap;
+        return AccountWithVolumesAndBalances.attributeTypeMap;
     }
 
     public constructor() {

@@ -10,30 +10,24 @@
  * Do not edit the class manually.
  */
 
+import { ListTransactions200ResponseCursor } from './ListTransactions200ResponseCursor';
 import { HttpFile } from '../http/http';
 
-export class Cursor {
-    'pageSize': number;
-    'hasMore': boolean;
+export class ListTransactions200Response {
+    'cursor': ListTransactions200ResponseCursor;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "pageSize",
-            "baseName": "page_size",
-            "type": "number",
-            "format": ""
-        },
-        {
-            "name": "hasMore",
-            "baseName": "has_more",
-            "type": "boolean",
+            "name": "cursor",
+            "baseName": "cursor",
+            "type": "ListTransactions200ResponseCursor",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return Cursor.attributeTypeMap;
+        return ListTransactions200Response.attributeTypeMap;
     }
 
     public constructor() {

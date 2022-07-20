@@ -4,19 +4,18 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**addMetadataOnTransaction**](TransactionsApi.md#addMetadataOnTransaction) | **POST** /{ledger}/transactions/{txid}/metadata | Set Transaction Metadata
-[**countTransactions**](TransactionsApi.md#countTransactions) | **HEAD** /{ledger}/transactions | Count transactions
-[**createTransaction**](TransactionsApi.md#createTransaction) | **POST** /{ledger}/transactions | Create Transaction
-[**createTransactions**](TransactionsApi.md#createTransactions) | **POST** /{ledger}/transactions/batch | Create Transactions Batch
-[**getTransaction**](TransactionsApi.md#getTransaction) | **GET** /{ledger}/transactions/{txid} | Get Transaction
-[**listTransactions**](TransactionsApi.md#listTransactions) | **GET** /{ledger}/transactions | Get all Transactions
-[**revertTransaction**](TransactionsApi.md#revertTransaction) | **POST** /{ledger}/transactions/{txid}/revert | Revert Transaction
+[**addMetadataOnTransaction**](TransactionsApi.md#addMetadataOnTransaction) | **POST** /{ledger}/transactions/{txid}/metadata | Set the metadata of a transaction by its ID.
+[**countTransactions**](TransactionsApi.md#countTransactions) | **HEAD** /{ledger}/transactions | Count the transactions from a ledger.
+[**createTransaction**](TransactionsApi.md#createTransaction) | **POST** /{ledger}/transactions | Create a new transaction to a ledger.
+[**createTransactions**](TransactionsApi.md#createTransactions) | **POST** /{ledger}/transactions/batch | Create a new batch of transactions to a ledger.
+[**getTransaction**](TransactionsApi.md#getTransaction) | **GET** /{ledger}/transactions/{txid} | Get transaction from a ledger by its ID.
+[**listTransactions**](TransactionsApi.md#listTransactions) | **GET** /{ledger}/transactions | List transactions from a ledger.
+[**revertTransaction**](TransactionsApi.md#revertTransaction) | **POST** /{ledger}/transactions/{txid}/revert | Revert a ledger transaction by its ID.
 
 
 # **addMetadataOnTransaction**
 > void addMetadataOnTransaction()
 
-Set a new metadata to a ledger transaction by transaction id
 
 ### Example
 
@@ -28,7 +27,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.addMetadataOnTransaction("ledger_example",  1,  {
+apiInstance.addMetadataOnTransaction("ledger001",  1234,  {
     "key": null,
   } ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
@@ -41,8 +40,8 @@ apiInstance.addMetadataOnTransaction("ledger_example",  1,  {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **requestBody** | **{ [key: string]: any; }**| metadata |
- **ledger** | [**string**] | ledger | defaults to undefined
- **txid** | [**number**] | txid | defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **txid** | [**number**] | Transaction ID. | defaults to undefined
 
 
 ### Return type
@@ -69,7 +68,6 @@ Name | Type | Description  | Notes
 # **countTransactions**
 > void countTransactions()
 
-Count transactions mathing given criteria
 
 ### Example
 
@@ -81,7 +79,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.countTransactions("ledger_example",  "after_example",  "reference_example",  "account_example",  "source_example",  "destination_example" ).then((data:any) => {
+apiInstance.countTransactions("ledger001",  "ref:001",  "users:001",  "users:001",  "users:001" ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -91,12 +89,11 @@ apiInstance.countTransactions("ledger_example",  "after_example",  "reference_ex
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
- **after** | [**string**] | pagination cursor, will return transactions after given txid (in descending order) | (optional) defaults to undefined
- **reference** | [**string**] | find transactions by reference field | (optional) defaults to undefined
- **account** | [**string**] | find transactions with postings involving given account, either as source or destination | (optional) defaults to undefined
- **source** | [**string**] | find transactions with postings involving given account at source | (optional) defaults to undefined
- **destination** | [**string**] | find transactions with postings involving given account at destination | (optional) defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **reference** | [**string**] | Filter transactions by reference field. | (optional) defaults to undefined
+ **account** | [**string**] | Filter transactions with postings involving given account, either as source or destination. | (optional) defaults to undefined
+ **source** | [**string**] | Filter transactions with postings involving given account at source. | (optional) defaults to undefined
+ **destination** | [**string**] | Filter transactions with postings involving given account at destination. | (optional) defaults to undefined
 
 
 ### Return type
@@ -123,7 +120,6 @@ Name | Type | Description  | Notes
 # **createTransaction**
 > CreateTransactionResponse createTransaction(transactionData)
 
-Create a new ledger transaction Commit a new transaction to the ledger
 
 ### Example
 
@@ -135,17 +131,19 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.createTransaction("ledger_example",  {
-    metadata: {},
+apiInstance.createTransaction("ledger001",  {
     postings: [
       {
-        amount: 1,
-        asset: "asset_example",
-        destination: "destination_example",
-        source: "source_example",
+        amount: 100,
+        asset: "COIN",
+        destination: "users:002",
+        source: "users:001",
       },
     ],
-    reference: "reference_example",
+    reference: "ref:001",
+    metadata: {
+      "key": null,
+    },
   },  true ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
@@ -156,9 +154,9 @@ apiInstance.createTransaction("ledger_example",  {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **transactionData** | **TransactionData**| transaction |
- **ledger** | [**string**] | ledger | defaults to undefined
- **preview** | [**boolean**] | Preview mode | (optional) defaults to undefined
+ **transactionData** | **TransactionData**|  |
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **preview** | [**boolean**] | Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker. | (optional) defaults to undefined
 
 
 ### Return type
@@ -186,9 +184,8 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **createTransactions**
-> TransactionListResponse createTransactions(transactions)
+> CreateTransactions200Response createTransactions(transactions)
 
-Create a new ledger transactions batch Commit a batch of new transactions to the ledger
 
 ### Example
 
@@ -200,19 +197,21 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.createTransactions("ledger_example",  {
+apiInstance.createTransactions("ledger001",  {
     transactions: [
       {
-        metadata: {},
         postings: [
           {
-            amount: 1,
-            asset: "asset_example",
-            destination: "destination_example",
-            source: "source_example",
+            amount: 100,
+            asset: "COIN",
+            destination: "users:002",
+            source: "users:001",
           },
         ],
-        reference: "reference_example",
+        reference: "ref:001",
+        metadata: {
+          "key": null,
+        },
       },
     ],
   } ).then((data:any) => {
@@ -225,13 +224,13 @@ apiInstance.createTransactions("ledger_example",  {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **transactions** | **Transactions**| transactions |
- **ledger** | [**string**] | ledger | defaults to undefined
+ **transactions** | **Transactions**|  |
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
 
 
 ### Return type
 
-**TransactionListResponse**
+**CreateTransactions200Response**
 
 ### Authorization
 
@@ -248,14 +247,13 @@ Name | Type | Description  | Notes
 |-------------|-------------|------------------|
 **200** | OK |  -  |
 **400** | Commit error |  -  |
-**409** | Confict |  -  |
+**409** | Conflict |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **getTransaction**
 > TransactionResponse getTransaction()
 
-Get transaction by transaction id
 
 ### Example
 
@@ -267,7 +265,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.getTransaction("ledger_example",  1 ).then((data:any) => {
+apiInstance.getTransaction("ledger001",  1234 ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -277,8 +275,8 @@ apiInstance.getTransaction("ledger_example",  1 ).then((data:any) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
- **txid** | [**number**] | txid | defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **txid** | [**number**] | Transaction ID. | defaults to undefined
 
 
 ### Return type
@@ -304,9 +302,9 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **listTransactions**
-> TransactionCursorResponse listTransactions()
+> ListTransactions200Response listTransactions()
 
-Get all ledger transactions
+List transactions from a ledger, sorted by txid in descending order.
 
 ### Example
 
@@ -318,7 +316,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.listTransactions("ledger_example",  "after_example",  "reference_example",  "account_example",  "source_example",  "destination_example" ).then((data:any) => {
+apiInstance.listTransactions("ledger001",  "1234",  "ref:001",  "users:001",  "users:001",  "users:001",  "start_time_example",  "end_time_example" ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -328,17 +326,19 @@ apiInstance.listTransactions("ledger_example",  "after_example",  "reference_exa
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
- **after** | [**string**] | pagination cursor, will return transactions after given txid (in descending order) | (optional) defaults to undefined
- **reference** | [**string**] | find transactions by reference field | (optional) defaults to undefined
- **account** | [**string**] | find transactions with postings involving given account, either as source or destination | (optional) defaults to undefined
- **source** | [**string**] | find transactions with postings involving given account at source | (optional) defaults to undefined
- **destination** | [**string**] | find transactions with postings involving given account at destination | (optional) defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **after** | [**string**] | Pagination cursor, will return transactions after given txid (in descending order). | (optional) defaults to undefined
+ **reference** | [**string**] | Find transactions by reference field. | (optional) defaults to undefined
+ **account** | [**string**] | Find transactions with postings involving given account, either as source or destination. | (optional) defaults to undefined
+ **source** | [**string**] | Find transactions with postings involving given account at source. | (optional) defaults to undefined
+ **destination** | [**string**] | Find transactions with postings involving given account at destination. | (optional) defaults to undefined
+ **startTime** | [**string**] | Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute). | (optional) defaults to undefined
+ **endTime** | [**string**] | Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute). | (optional) defaults to undefined
 
 
 ### Return type
 
-**TransactionCursorResponse**
+**ListTransactions200Response**
 
 ### Authorization
 
@@ -360,7 +360,6 @@ Name | Type | Description  | Notes
 # **revertTransaction**
 > TransactionResponse revertTransaction()
 
-Revert a ledger transaction by transaction id
 
 ### Example
 
@@ -372,7 +371,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
-apiInstance.revertTransaction("ledger_example",  1 ).then((data:any) => {
+apiInstance.revertTransaction("ledger001",  1234 ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -382,8 +381,8 @@ apiInstance.revertTransaction("ledger_example",  1 ).then((data:any) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
- **txid** | [**number**] | txid | defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **txid** | [**number**] | Transaction ID. | defaults to undefined
 
 
 ### Return type

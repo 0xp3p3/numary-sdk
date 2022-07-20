@@ -19,9 +19,8 @@ import { MappingResponse } from '../models/MappingResponse';
 export class MappingApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Get ledger mapping
-     * Get mapping
-     * @param ledger ledger
+     * Get the mapping of a ledger.
+     * @param ledger Name of the ledger.
      */
     public async getMapping(ledger: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -57,10 +56,9 @@ export class MappingApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Update ledger mapping
-     * Put mapping
-     * @param ledger ledger
-     * @param mapping mapping
+     * Update the mapping of a ledger.
+     * @param ledger Name of the ledger.
+     * @param mapping 
      */
     public async updateMapping(ledger: string, mapping: Mapping, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;

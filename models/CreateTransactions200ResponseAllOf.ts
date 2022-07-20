@@ -10,30 +10,24 @@
  * Do not edit the class manually.
  */
 
+import { Cursor } from './Cursor';
 import { HttpFile } from '../http/http';
 
-export class Cursor {
-    'pageSize': number;
-    'hasMore': boolean;
+export class CreateTransactions200ResponseAllOf {
+    'cursor'?: Cursor;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "pageSize",
-            "baseName": "page_size",
-            "type": "number",
-            "format": ""
-        },
-        {
-            "name": "hasMore",
-            "baseName": "has_more",
-            "type": "boolean",
+            "name": "cursor",
+            "baseName": "cursor",
+            "type": "Cursor",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return Cursor.attributeTypeMap;
+        return CreateTransactions200ResponseAllOf.attributeTypeMap;
     }
 
     public constructor() {

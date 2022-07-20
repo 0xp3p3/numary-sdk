@@ -14,19 +14,13 @@ import { Posting } from './Posting';
 import { HttpFile } from '../http/http';
 
 export class TransactionData {
-    'metadata'?: any;
     'postings': Array<Posting>;
     'reference'?: string;
+    'metadata'?: { [key: string]: any; };
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
-        {
-            "name": "metadata",
-            "baseName": "metadata",
-            "type": "any",
-            "format": ""
-        },
         {
             "name": "postings",
             "baseName": "postings",
@@ -37,6 +31,12 @@ export class TransactionData {
             "name": "reference",
             "baseName": "reference",
             "type": "string",
+            "format": ""
+        },
+        {
+            "name": "metadata",
+            "baseName": "metadata",
+            "type": "{ [key: string]: any; }",
             "format": ""
         }    ];
 

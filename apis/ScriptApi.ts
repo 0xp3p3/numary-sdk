@@ -19,11 +19,10 @@ import { ScriptResult } from '../models/ScriptResult';
 export class ScriptApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Execute a Numscript and create the transaction if any
-     * Execute Numscript
-     * @param ledger ledger
-     * @param script script
-     * @param preview Preview mode
+     * Execute a Numscript.
+     * @param ledger Name of the ledger.
+     * @param script 
+     * @param preview Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker.
      */
     public async runScript(ledger: string, script: Script, preview?: boolean, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;

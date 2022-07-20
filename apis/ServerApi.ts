@@ -18,8 +18,7 @@ import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
 export class ServerApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Show server informations
-     * Server Info
+     * Show server information.
      */
     public async getInfo(_options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;

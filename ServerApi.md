@@ -4,13 +4,12 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getInfo**](ServerApi.md#getInfo) | **GET** /_info | Server Info
+[**getInfo**](ServerApi.md#getInfo) | **GET** /_info | Show server information.
 
 
 # **getInfo**
 > ConfigInfoResponse getInfo()
 
-Show server informations
 
 ### Example
 

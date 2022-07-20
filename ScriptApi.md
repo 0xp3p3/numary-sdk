@@ -4,13 +4,12 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**runScript**](ScriptApi.md#runScript) | **POST** /{ledger}/script | Execute Numscript
+[**runScript**](ScriptApi.md#runScript) | **POST** /{ledger}/script | Execute a Numscript.
 
 
 # **runScript**
 > ScriptResult runScript(script)
 
-Execute a Numscript and create the transaction if any
 
 ### Example
 
@@ -22,8 +21,15 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new ScriptApi(configuration);
 
-apiInstance.runScript("ledger_example",  {
-    plain: "plain_example",
+apiInstance.runScript("ledger001",  {
+    plain: `vars {
+account $user
+}
+send [COIN 10] (
+	source = @world
+	destination = $user
+)
+`,
     vars: {},
   },  true ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
@@ -35,9 +41,9 @@ apiInstance.runScript("ledger_example",  {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **script** | **Script**| script |
- **ledger** | [**string**] | ledger | defaults to undefined
- **preview** | [**boolean**] | Preview mode | (optional) defaults to undefined
+ **script** | **Script**|  |
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **preview** | [**boolean**] | Set the preview mode. Preview mode doesn&#39;t add the logs to the database or publish a message to the message broker. | (optional) defaults to undefined
 
 
 ### Return type

@@ -4,10 +4,10 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**addMetadataToAccount**](AccountsApi.md#addMetadataToAccount) | **POST** /{ledger}/accounts/{accountId}/metadata | Add metadata to account
-[**countAccounts**](AccountsApi.md#countAccounts) | **HEAD** /{ledger}/accounts | Count accounts
-[**getAccount**](AccountsApi.md#getAccount) | **GET** /{ledger}/accounts/{accountId} | Get account by address
-[**listAccounts**](AccountsApi.md#listAccounts) | **GET** /{ledger}/accounts | List all accounts
+[**addMetadataToAccount**](AccountsApi.md#addMetadataToAccount) | **POST** /{ledger}/accounts/{address}/metadata | Add metadata to an account.
+[**countAccounts**](AccountsApi.md#countAccounts) | **HEAD** /{ledger}/accounts | Count the accounts from a ledger.
+[**getAccount**](AccountsApi.md#getAccount) | **GET** /{ledger}/accounts/{address} | Get account by its address.
+[**listAccounts**](AccountsApi.md#listAccounts) | **GET** /{ledger}/accounts | List accounts from a ledger.
 
 
 # **addMetadataToAccount**
@@ -24,7 +24,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new AccountsApi(configuration);
 
-apiInstance.addMetadataToAccount("ledger_example",  "accountId_example",  {
+apiInstance.addMetadataToAccount("ledger001",  "users:001",  {
     "key": null,
   } ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
@@ -37,8 +37,8 @@ apiInstance.addMetadataToAccount("ledger_example",  "accountId_example",  {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **requestBody** | **{ [key: string]: any; }**| metadata |
- **ledger** | [**string**] | ledger | defaults to undefined
- **accountId** | [**string**] | accountId | defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **address** | [**string**] | Exact address of the account. | defaults to undefined
 
 
 ### Return type
@@ -77,9 +77,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new AccountsApi(configuration);
 
-apiInstance.countAccounts("ledger_example",  "after_example",  "address_example",  {
-    "key": "key_example",
-  } ).then((data:any) => {
+apiInstance.countAccounts("ledger001",  "users:.+",  {} ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -89,10 +87,9 @@ apiInstance.countAccounts("ledger_example",  "after_example",  "address_example"
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
- **after** | [**string**] | pagination cursor, will return accounts after given address (in descending order) | (optional) defaults to undefined
- **address** | [**string**] | account address | (optional) defaults to undefined
- **metadata** | **{ [key: string]: string; }** | metadata | (optional) defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **address** | [**string**] | Filter accounts by address pattern (regular expression placed between ^ and $). | (optional) defaults to undefined
+ **metadata** | **any** | Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below. | (optional) defaults to undefined
 
 
 ### Return type
@@ -117,7 +114,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **getAccount**
-> AccountResponse getAccount()
+> GetAccount200Response getAccount()
 
 
 ### Example
@@ -130,7 +127,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new AccountsApi(configuration);
 
-apiInstance.getAccount("ledger_example",  "accountId_example" ).then((data:any) => {
+apiInstance.getAccount("ledger001",  "users:001" ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -140,13 +137,13 @@ apiInstance.getAccount("ledger_example",  "accountId_example" ).then((data:any) 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
- **accountId** | [**string**] | accountId | defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **address** | [**string**] | Exact address of the account. | defaults to undefined
 
 
 ### Return type
 
-**AccountResponse**
+**GetAccount200Response**
 
 ### Authorization
 
@@ -166,8 +163,9 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **listAccounts**
-> AccountCursorResponse listAccounts()
+> ListAccounts200Response listAccounts()
 
+List accounts from a ledger, sorted by address in descending order.
 
 ### Example
 
@@ -179,9 +177,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new AccountsApi(configuration);
 
-apiInstance.listAccounts("ledger_example",  "after_example",  "address_example",  {
-    "key": "key_example",
-  } ).then((data:any) => {
+apiInstance.listAccounts("ledger001",  "users:003",  "users:.+",  {} ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -191,15 +187,15 @@ apiInstance.listAccounts("ledger_example",  "after_example",  "address_example",
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
- **after** | [**string**] | pagination cursor, will return accounts after given address (in descending order) | (optional) defaults to undefined
- **address** | [**string**] | account address | (optional) defaults to undefined
- **metadata** | **{ [key: string]: string; }** | account address | (optional) defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
+ **after** | [**string**] | Pagination cursor, will return accounts after given address, in descending order. | (optional) defaults to undefined
+ **address** | [**string**] | Filter accounts by address pattern (regular expression placed between ^ and $). | (optional) defaults to undefined
+ **metadata** | **any** | Filter accounts by metadata key value pairs. Nested objects can be used as seen in the example below. | (optional) defaults to undefined
 
 
 ### Return type
 
-**AccountCursorResponse**
+**ListAccounts200Response**
 
 ### Authorization
 

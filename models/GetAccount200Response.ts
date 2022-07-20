@@ -10,30 +10,24 @@
  * Do not edit the class manually.
  */
 
+import { AccountWithVolumesAndBalances } from './AccountWithVolumesAndBalances';
 import { HttpFile } from '../http/http';
 
-export class Cursor {
-    'pageSize': number;
-    'hasMore': boolean;
+export class GetAccount200Response {
+    'data': AccountWithVolumesAndBalances;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "pageSize",
-            "baseName": "page_size",
-            "type": "number",
-            "format": ""
-        },
-        {
-            "name": "hasMore",
-            "baseName": "has_more",
-            "type": "boolean",
+            "name": "data",
+            "baseName": "data",
+            "type": "AccountWithVolumesAndBalances",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return Cursor.attributeTypeMap;
+        return GetAccount200Response.attributeTypeMap;
     }
 
     public constructor() {

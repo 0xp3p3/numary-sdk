@@ -4,14 +4,13 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getMapping**](MappingApi.md#getMapping) | **GET** /{ledger}/mapping | Get mapping
-[**updateMapping**](MappingApi.md#updateMapping) | **PUT** /{ledger}/mapping | Put mapping
+[**getMapping**](MappingApi.md#getMapping) | **GET** /{ledger}/mapping | Get the mapping of a ledger.
+[**updateMapping**](MappingApi.md#updateMapping) | **PUT** /{ledger}/mapping | Update the mapping of a ledger.
 
 
 # **getMapping**
 > MappingResponse getMapping()
 
-Get ledger mapping
 
 ### Example
 
@@ -23,7 +22,7 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new MappingApi(configuration);
 
-apiInstance.getMapping("ledger_example" ).then((data:any) => {
+apiInstance.getMapping("ledger001" ).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -33,7 +32,7 @@ apiInstance.getMapping("ledger_example" ).then((data:any) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ledger** | [**string**] | ledger | defaults to undefined
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
 
 
 ### Return type
@@ -60,7 +59,6 @@ Name | Type | Description  | Notes
 # **updateMapping**
 > MappingResponse updateMapping(mapping)
 
-Update ledger mapping
 
 ### Example
 
@@ -72,10 +70,10 @@ import * as fs from 'fs';
 const configuration = createConfiguration();
 const apiInstance = new MappingApi(configuration);
 
-apiInstance.updateMapping("ledger_example",  {
+apiInstance.updateMapping("ledger001",  {
     contracts: [
       {
-        account: "account_example",
+        account: "users:001",
         expr: {},
       },
     ],
@@ -89,8 +87,8 @@ apiInstance.updateMapping("ledger_example",  {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **mapping** | **Mapping**| mapping |
- **ledger** | [**string**] | ledger | defaults to undefined
+ **mapping** | **Mapping**|  |
+ **ledger** | [**string**] | Name of the ledger. | defaults to undefined
 
 
 ### Return type
