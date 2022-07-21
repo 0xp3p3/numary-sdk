@@ -1,6 +1,6 @@
 # TransactionsApi
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *https://.o.numary.cloud/ledger*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -135,6 +135,7 @@ const configuration = createConfiguration();
 const apiInstance = new TransactionsApi(configuration);
 
 apiInstance.createTransaction("ledger001",  {
+    timestamp: new Date('1970-01-01T00:00:00.00Z'),
     postings: [
       {
         amount: 100,
@@ -203,6 +204,7 @@ const apiInstance = new TransactionsApi(configuration);
 apiInstance.createTransactions("ledger001",  {
     transactions: [
       {
+        timestamp: new Date('1970-01-01T00:00:00.00Z'),
         postings: [
           {
             amount: 100,

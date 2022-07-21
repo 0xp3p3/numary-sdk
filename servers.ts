@@ -48,6 +48,6 @@ export class ServerConfiguration<T extends { [key: string]: string }> implements
     }
 }
 
-export const server1 = new ServerConfiguration<{  }>("", {  })
+export const server1 = new ServerConfiguration<{  "organization": string  }>("https://{organization}.o.numary.cloud/ledger", {  "organization": ""  })
 
 export const servers = [server1];
