@@ -10,24 +10,30 @@
  * Do not edit the class manually.
  */
 
-import { TransactionData } from '../models/TransactionData';
 import { HttpFile } from '../http/http';
 
-export class Transactions {
-    'transactions': Array<TransactionData>;
+export class RunScript400Response {
+    'errorCode': string;
+    'errorMessage'?: string;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "transactions",
-            "baseName": "transactions",
-            "type": "Array<TransactionData>",
+            "name": "errorCode",
+            "baseName": "error_code",
+            "type": "string",
+            "format": ""
+        },
+        {
+            "name": "errorMessage",
+            "baseName": "error_message",
+            "type": "string",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return Transactions.attributeTypeMap;
+        return RunScript400Response.attributeTypeMap;
     }
 
     public constructor() {

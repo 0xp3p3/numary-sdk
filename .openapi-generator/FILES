@@ -26,6 +26,7 @@ index.ts
 middleware.ts
 models/Account.ts
 models/AccountWithVolumesAndBalances.ts
+models/AddMetadataToAccount409Response.ts
 models/Config.ts
 models/ConfigInfo.ts
 models/ConfigInfoResponse.ts
@@ -57,6 +58,7 @@ models/Mapping.ts
 models/MappingResponse.ts
 models/ObjectSerializer.ts
 models/Posting.ts
+models/RunScript400Response.ts
 models/Script.ts
 models/ScriptResult.ts
 models/Stats.ts

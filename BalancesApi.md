@@ -1,4 +1,4 @@
-# BalancesApi
+# ledger.BalancesApi
 
 All URIs are relative to *https://.o.numary.cloud/ledger*
 
@@ -16,13 +16,24 @@ Method | HTTP request | Description
 
 
 ```typescript
-import { BalancesApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new BalancesApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.BalancesApi(configuration);
 
-apiInstance.getBalances("ledger001",  "users:001",  "users:003",  "aHR0cHM6Ly9nLnBhZ2UvTmVrby1SYW1lbj9zaGFyZQ==" ).then((data:any) => {
+let body:ledger.BalancesApiGetBalancesRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // string | Filter balances involving given account, either as source or destination. (optional)
+  address: "users:001",
+  // string | Pagination cursor, will return accounts after given address, in descending order. (optional)
+  after: "users:003",
+  // string | Parameter used in pagination requests.  Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. (optional)
+  paginationToken: "aHR0cHM6Ly9nLnBhZ2UvTmVrby1SYW1lbj9zaGFyZQ==",
+};
+
+apiInstance.getBalances(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -68,13 +79,20 @@ Name | Type | Description  | Notes
 
 
 ```typescript
-import { BalancesApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new BalancesApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.BalancesApi(configuration);
 
-apiInstance.getBalancesAggregated("ledger001",  "users:001" ).then((data:any) => {
+let body:ledger.BalancesApiGetBalancesAggregatedRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // string | Filter balances involving given account, either as source or destination. (optional)
+  address: "users:001",
+};
+
+apiInstance.getBalancesAggregated(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```

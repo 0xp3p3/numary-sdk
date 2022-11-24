@@ -3,8 +3,6 @@ import * as FormData from "form-data";
 import { URLSearchParams } from 'url';
 import * as http from 'http';
 import * as https from 'https';
-// typings of url-parse are incorrect...
-// @ts-ignore
 import * as URLParse from "url-parse";
 import { Observable, from } from '../rxjsStub';
 
@@ -51,7 +49,7 @@ export type RequestBody = undefined | string | FormData | URLSearchParams;
 export class RequestContext {
     private headers: { [key: string]: string } = {};
     private body: RequestBody = undefined;
-    private url: URL;
+    private url: URLParse;
     private agent: http.Agent | https.Agent | undefined = undefined;
 
     /**
@@ -61,7 +59,7 @@ export class RequestContext {
      * @param httpMethod http method
      */
     public constructor(url: string, private httpMethod: HttpMethod) {
-        this.url = new URL(url);
+        this.url = new URLParse(url, true);
     }
 
     /*
@@ -77,7 +75,7 @@ export class RequestContext {
      *
      */
     public setUrl(url: string) {
-        this.url = new URL(url);
+        this.url = new URLParse(url, true);
     }
 
     /**
@@ -106,7 +104,9 @@ export class RequestContext {
     }
 
     public setQueryParam(name: string, value: string) {
-        this.url.searchParams.set(name, value);
+        let queryObj = this.url.query;
+        queryObj[name] = value;
+        this.url.set("query", queryObj);
     }
 
     /**

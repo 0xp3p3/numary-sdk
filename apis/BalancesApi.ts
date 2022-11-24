@@ -1,5 +1,5 @@
 // TODO: better import syntax?
-import {BaseAPIRequestFactory, RequiredError} from './baseapi';
+import {BaseAPIRequestFactory, RequiredError, COLLECTION_FORMATS} from './baseapi';
 import {Configuration} from '../configuration';
 import {RequestContext, HttpMethod, ResponseContext, HttpFile} from '../http/http';
 import * as FormData from "form-data";
@@ -147,7 +147,7 @@ export class BalancesApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "ListAccounts400Response", ""
             ) as ListAccounts400Response;
-            throw new ApiException<ListAccounts400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<ListAccounts400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -183,7 +183,7 @@ export class BalancesApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetBalancesAggregated400Response", ""
             ) as GetBalancesAggregated400Response;
-            throw new ApiException<GetBalancesAggregated400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<GetBalancesAggregated400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

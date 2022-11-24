@@ -1,4 +1,4 @@
-# TransactionsApi
+# ledger.TransactionsApi
 
 All URIs are relative to *https://.o.numary.cloud/ledger*
 
@@ -21,15 +21,24 @@ Method | HTTP request | Description
 
 
 ```typescript
-import { TransactionsApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new TransactionsApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.TransactionsApi(configuration);
 
-apiInstance.addMetadataOnTransaction("ledger001",  1234,  {
+let body:ledger.TransactionsApiAddMetadataOnTransactionRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // number | Transaction ID.
+  txid: 1234,
+  // { [key: string]: any; } | metadata (optional)
+  requestBody: {
     "key": null,
-  } ).then((data:any) => {
+  },
+};
+
+apiInstance.addMetadataOnTransaction(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -64,6 +73,7 @@ Name | Type | Description  | Notes
 **204** | No Content |  -  |
 **400** | Bad Request |  -  |
 **404** | Not Found |  -  |
+**409** | Conflict |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
@@ -75,13 +85,28 @@ Name | Type | Description  | Notes
 
 
 ```typescript
-import { TransactionsApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new TransactionsApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.TransactionsApi(configuration);
 
-apiInstance.countTransactions("ledger001",  "ref:001",  "users:001",  "users:001",  "users:001",  {} ).then((data:any) => {
+let body:ledger.TransactionsApiCountTransactionsRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // string | Filter transactions by reference field. (optional)
+  reference: "ref:001",
+  // string | Filter transactions with postings involving given account, either as source or destination (regular expression placed between ^ and $). (optional)
+  account: "users:001",
+  // string | Filter transactions with postings involving given account at source (regular expression placed between ^ and $). (optional)
+  source: "users:001",
+  // string | Filter transactions with postings involving given account at destination (regular expression placed between ^ and $). (optional)
+  destination: "users:001",
+  // any | Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below. (optional)
+  metadata: {},
+};
+
+apiInstance.countTransactions(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -93,9 +118,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ledger** | [**string**] | Name of the ledger. | defaults to undefined
  **reference** | [**string**] | Filter transactions by reference field. | (optional) defaults to undefined
- **account** | [**string**] | Filter transactions with postings involving given account, either as source or destination. | (optional) defaults to undefined
- **source** | [**string**] | Filter transactions with postings involving given account at source. | (optional) defaults to undefined
- **destination** | [**string**] | Filter transactions with postings involving given account at destination. | (optional) defaults to undefined
+ **account** | [**string**] | Filter transactions with postings involving given account, either as source or destination (regular expression placed between ^ and $). | (optional) defaults to undefined
+ **source** | [**string**] | Filter transactions with postings involving given account at source (regular expression placed between ^ and $). | (optional) defaults to undefined
+ **destination** | [**string**] | Filter transactions with postings involving given account at destination (regular expression placed between ^ and $). | (optional) defaults to undefined
  **metadata** | **any** | Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below. | (optional) defaults to undefined
 
 
@@ -128,13 +153,17 @@ Name | Type | Description  | Notes
 
 
 ```typescript
-import { TransactionsApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new TransactionsApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.TransactionsApi(configuration);
 
-apiInstance.createTransaction("ledger001",  {
+let body:ledger.TransactionsApiCreateTransactionRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // TransactionData
+  transactionData: {
     timestamp: new Date('1970-01-01T00:00:00.00Z'),
     postings: [
       {
@@ -148,7 +177,12 @@ apiInstance.createTransaction("ledger001",  {
     metadata: {
       "key": null,
     },
-  },  true ).then((data:any) => {
+  },
+  // boolean | Set the preview mode. Preview mode doesn't add the logs to the database or publish a message to the message broker. (optional)
+  preview: true,
+};
+
+apiInstance.createTransaction(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -195,13 +229,17 @@ Name | Type | Description  | Notes
 
 
 ```typescript
-import { TransactionsApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new TransactionsApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.TransactionsApi(configuration);
 
-apiInstance.createTransactions("ledger001",  {
+let body:ledger.TransactionsApiCreateTransactionsRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // Transactions
+  transactions: {
     transactions: [
       {
         timestamp: new Date('1970-01-01T00:00:00.00Z'),
@@ -219,7 +257,10 @@ apiInstance.createTransactions("ledger001",  {
         },
       },
     ],
-  } ).then((data:any) => {
+  },
+};
+
+apiInstance.createTransactions(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -264,13 +305,20 @@ Name | Type | Description  | Notes
 
 
 ```typescript
-import { TransactionsApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new TransactionsApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.TransactionsApi(configuration);
 
-apiInstance.getTransaction("ledger001",  1234 ).then((data:any) => {
+let body:ledger.TransactionsApiGetTransactionRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // number | Transaction ID.
+  txid: 1234,
+};
+
+apiInstance.getTransaction(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -316,13 +364,38 @@ List transactions from a ledger, sorted by txid in descending order.
 
 
 ```typescript
-import { TransactionsApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new TransactionsApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.TransactionsApi(configuration);
 
-apiInstance.listTransactions("ledger001",  100,  "1234",  "ref:001",  "users:001",  "users:001",  "users:001",  "start_time_example",  "end_time_example",  "aHR0cHM6Ly9nLnBhZ2UvTmVrby1SYW1lbj9zaGFyZQ==",  {} ).then((data:any) => {
+let body:ledger.TransactionsApiListTransactionsRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // number | The maximum number of results to return per page (optional)
+  pageSize: 100,
+  // string | Pagination cursor, will return transactions after given txid (in descending order). (optional)
+  after: "1234",
+  // string | Find transactions by reference field. (optional)
+  reference: "ref:001",
+  // string | Find transactions with postings involving given account, either as source or destination. (optional)
+  account: "users:001",
+  // string | Find transactions with postings involving given account at source. (optional)
+  source: "users:001",
+  // string | Find transactions with postings involving given account at destination. (optional)
+  destination: "users:001",
+  // string | Filter transactions that occurred after this timestamp. The format is RFC3339 and is inclusive (for example, 12:00:01 includes the first second of the minute).  (optional)
+  startTime: "start_time_example",
+  // string | Filter transactions that occurred before this timestamp. The format is RFC3339 and is exclusive (for example, 12:00:01 excludes the first second of the minute).  (optional)
+  endTime: "end_time_example",
+  // string | Parameter used in pagination requests. Maximum page size is set to 15. Set to the value of next for the next page of results.  Set to the value of previous for the previous page of results. No other parameters can be set when the pagination token is set.  (optional)
+  paginationToken: "aHR0cHM6Ly9nLnBhZ2UvTmVrby1SYW1lbj9zaGFyZQ==",
+  // any | Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below. (optional)
+  metadata: {},
+};
+
+apiInstance.listTransactions(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -375,13 +448,20 @@ Name | Type | Description  | Notes
 
 
 ```typescript
-import { TransactionsApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new TransactionsApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.TransactionsApi(configuration);
 
-apiInstance.revertTransaction("ledger001",  1234 ).then((data:any) => {
+let body:ledger.TransactionsApiRevertTransactionRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // number | Transaction ID.
+  txid: 1234,
+};
+
+apiInstance.revertTransaction(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -415,6 +495,7 @@ Name | Type | Description  | Notes
 **200** | OK |  -  |
 **400** | Bad Request |  -  |
 **404** | Not Found |  -  |
+**409** | Conflict |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
