@@ -1,4 +1,4 @@
-# ServerApi
+# ledger.ServerApi
 
 All URIs are relative to *https://.o.numary.cloud/ledger*
 
@@ -15,13 +15,15 @@ Method | HTTP request | Description
 
 
 ```typescript
-import { ServerApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new ServerApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.ServerApi(configuration);
 
-apiInstance.getInfo().then((data:any) => {
+let body:any = {};
+
+apiInstance.getInfo(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```

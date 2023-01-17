@@ -1,5 +1,5 @@
 // TODO: better import syntax?
-import {BaseAPIRequestFactory, RequiredError} from './baseapi';
+import {BaseAPIRequestFactory, RequiredError, COLLECTION_FORMATS} from './baseapi';
 import {Configuration} from '../configuration';
 import {RequestContext, HttpMethod, ResponseContext, HttpFile} from '../http/http';
 import * as FormData from "form-data";
@@ -10,6 +10,7 @@ import {canConsumeForm, isCodeInRange} from '../util';
 import {SecurityAuthentication} from '../auth/auth';
 
 
+import { AddMetadataToAccount409Response } from '../models/AddMetadataToAccount409Response';
 import { CreateTransaction400Response } from '../models/CreateTransaction400Response';
 import { CreateTransaction409Response } from '../models/CreateTransaction409Response';
 import { CreateTransactions400Response } from '../models/CreateTransactions400Response';
@@ -89,9 +90,9 @@ export class TransactionsApiRequestFactory extends BaseAPIRequestFactory {
      * Count the transactions from a ledger.
      * @param ledger Name of the ledger.
      * @param reference Filter transactions by reference field.
-     * @param account Filter transactions with postings involving given account, either as source or destination.
-     * @param source Filter transactions with postings involving given account at source.
-     * @param destination Filter transactions with postings involving given account at destination.
+     * @param account Filter transactions with postings involving given account, either as source or destination (regular expression placed between ^ and $).
+     * @param source Filter transactions with postings involving given account at source (regular expression placed between ^ and $).
+     * @param destination Filter transactions with postings involving given account at destination (regular expression placed between ^ and $).
      * @param metadata Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
     public async countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, metadata?: any, _options?: Configuration): Promise<RequestContext> {
@@ -493,14 +494,21 @@ export class TransactionsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetTransaction400Response", ""
             ) as GetTransaction400Response;
-            throw new ApiException<GetTransaction400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<GetTransaction400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
             const body: GetTransaction404Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetTransaction404Response", ""
             ) as GetTransaction404Response;
-            throw new ApiException<GetTransaction404Response>(404, "Not Found", body, response.headers);
+            throw new ApiException<GetTransaction404Response>(response.httpStatusCode, "Not Found", body, response.headers);
+        }
+        if (isCodeInRange("409", response.httpStatusCode)) {
+            const body: AddMetadataToAccount409Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "AddMetadataToAccount409Response", ""
+            ) as AddMetadataToAccount409Response;
+            throw new ApiException<AddMetadataToAccount409Response>(response.httpStatusCode, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -561,21 +569,21 @@ export class TransactionsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "TransactionsResponse", ""
             ) as TransactionsResponse;
-            throw new ApiException<TransactionsResponse>(304, "Not modified (when preview is enabled)", body, response.headers);
+            throw new ApiException<TransactionsResponse>(response.httpStatusCode, "Not modified (when preview is enabled)", body, response.headers);
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
             const body: CreateTransaction400Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "CreateTransaction400Response", ""
             ) as CreateTransaction400Response;
-            throw new ApiException<CreateTransaction400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<CreateTransaction400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
         if (isCodeInRange("409", response.httpStatusCode)) {
             const body: CreateTransaction409Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "CreateTransaction409Response", ""
             ) as CreateTransaction409Response;
-            throw new ApiException<CreateTransaction409Response>(409, "Conflict", body, response.headers);
+            throw new ApiException<CreateTransaction409Response>(response.httpStatusCode, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -611,14 +619,14 @@ export class TransactionsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "CreateTransactions400Response", ""
             ) as CreateTransactions400Response;
-            throw new ApiException<CreateTransactions400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<CreateTransactions400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
         if (isCodeInRange("409", response.httpStatusCode)) {
             const body: CreateTransaction409Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "CreateTransaction409Response", ""
             ) as CreateTransaction409Response;
-            throw new ApiException<CreateTransaction409Response>(409, "Conflict", body, response.headers);
+            throw new ApiException<CreateTransaction409Response>(response.httpStatusCode, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -654,14 +662,14 @@ export class TransactionsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetTransaction400Response", ""
             ) as GetTransaction400Response;
-            throw new ApiException<GetTransaction400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<GetTransaction400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
             const body: GetTransaction404Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetTransaction404Response", ""
             ) as GetTransaction404Response;
-            throw new ApiException<GetTransaction404Response>(404, "Not Found", body, response.headers);
+            throw new ApiException<GetTransaction404Response>(response.httpStatusCode, "Not Found", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -697,7 +705,7 @@ export class TransactionsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "ListAccounts400Response", ""
             ) as ListAccounts400Response;
-            throw new ApiException<ListAccounts400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<ListAccounts400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -733,14 +741,21 @@ export class TransactionsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetTransaction400Response", ""
             ) as GetTransaction400Response;
-            throw new ApiException<GetTransaction400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<GetTransaction400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
             const body: GetTransaction404Response = ObjectSerializer.deserialize(
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetTransaction404Response", ""
             ) as GetTransaction404Response;
-            throw new ApiException<GetTransaction404Response>(404, "Not Found", body, response.headers);
+            throw new ApiException<GetTransaction404Response>(response.httpStatusCode, "Not Found", body, response.headers);
+        }
+        if (isCodeInRange("409", response.httpStatusCode)) {
+            const body: AddMetadataToAccount409Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "AddMetadataToAccount409Response", ""
+            ) as AddMetadataToAccount409Response;
+            throw new ApiException<AddMetadataToAccount409Response>(response.httpStatusCode, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

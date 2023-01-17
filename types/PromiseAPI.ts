@@ -1,9 +1,9 @@
 import { ResponseContext, RequestContext, HttpFile } from '../http/http';
-import * as models from '../models/all';
 import { Configuration} from '../configuration'
 
 import { Account } from '../models/Account';
 import { AccountWithVolumesAndBalances } from '../models/AccountWithVolumesAndBalances';
+import { AddMetadataToAccount409Response } from '../models/AddMetadataToAccount409Response';
 import { Config } from '../models/Config';
 import { ConfigInfo } from '../models/ConfigInfo';
 import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
@@ -34,6 +34,7 @@ import { ListTransactions200ResponseCursorAllOf } from '../models/ListTransactio
 import { Mapping } from '../models/Mapping';
 import { MappingResponse } from '../models/MappingResponse';
 import { Posting } from '../models/Posting';
+import { RunScript400Response } from '../models/RunScript400Response';
 import { Script } from '../models/Script';
 import { ScriptResult } from '../models/ScriptResult';
 import { Stats } from '../models/Stats';
@@ -306,9 +307,9 @@ export class PromiseTransactionsApi {
      * Count the transactions from a ledger.
      * @param ledger Name of the ledger.
      * @param reference Filter transactions by reference field.
-     * @param account Filter transactions with postings involving given account, either as source or destination.
-     * @param source Filter transactions with postings involving given account at source.
-     * @param destination Filter transactions with postings involving given account at destination.
+     * @param account Filter transactions with postings involving given account, either as source or destination (regular expression placed between ^ and $).
+     * @param source Filter transactions with postings involving given account at source (regular expression placed between ^ and $).
+     * @param destination Filter transactions with postings involving given account at destination (regular expression placed between ^ and $).
      * @param metadata Filter transactions by metadata key value pairs. Nested objects can be used as seen in the example below.
      */
     public countTransactions(ledger: string, reference?: string, account?: string, source?: string, destination?: string, metadata?: any, _options?: Configuration): Promise<void> {

@@ -1,88 +1,92 @@
-export * from './Account';
-export * from './AccountWithVolumesAndBalances';
-export * from './Config';
-export * from './ConfigInfo';
-export * from './ConfigInfoResponse';
-export * from './Contract';
-export * from './CreateTransaction400Response';
-export * from './CreateTransaction409Response';
-export * from './CreateTransactions400Response';
-export * from './Cursor';
-export * from './ErrorCode';
-export * from './ErrorResponse';
-export * from './GetAccount200Response';
-export * from './GetAccount400Response';
-export * from './GetBalances200Response';
-export * from './GetBalances200ResponseCursor';
-export * from './GetBalances200ResponseCursorAllOf';
-export * from './GetBalancesAggregated200Response';
-export * from './GetBalancesAggregated400Response';
-export * from './GetTransaction400Response';
-export * from './GetTransaction404Response';
-export * from './LedgerStorage';
-export * from './ListAccounts200Response';
-export * from './ListAccounts200ResponseCursor';
-export * from './ListAccounts200ResponseCursorAllOf';
-export * from './ListAccounts400Response';
-export * from './ListTransactions200Response';
-export * from './ListTransactions200ResponseCursor';
-export * from './ListTransactions200ResponseCursorAllOf';
-export * from './Mapping';
-export * from './MappingResponse';
-export * from './Posting';
-export * from './Script';
-export * from './ScriptResult';
-export * from './Stats';
-export * from './StatsResponse';
-export * from './Transaction';
-export * from './TransactionData';
-export * from './TransactionResponse';
-export * from './Transactions';
-export * from './TransactionsResponse';
-export * from './Volume';
+export * from '../models/Account';
+export * from '../models/AccountWithVolumesAndBalances';
+export * from '../models/AddMetadataToAccount409Response';
+export * from '../models/Config';
+export * from '../models/ConfigInfo';
+export * from '../models/ConfigInfoResponse';
+export * from '../models/Contract';
+export * from '../models/CreateTransaction400Response';
+export * from '../models/CreateTransaction409Response';
+export * from '../models/CreateTransactions400Response';
+export * from '../models/Cursor';
+export * from '../models/ErrorCode';
+export * from '../models/ErrorResponse';
+export * from '../models/GetAccount200Response';
+export * from '../models/GetAccount400Response';
+export * from '../models/GetBalances200Response';
+export * from '../models/GetBalances200ResponseCursor';
+export * from '../models/GetBalances200ResponseCursorAllOf';
+export * from '../models/GetBalancesAggregated200Response';
+export * from '../models/GetBalancesAggregated400Response';
+export * from '../models/GetTransaction400Response';
+export * from '../models/GetTransaction404Response';
+export * from '../models/LedgerStorage';
+export * from '../models/ListAccounts200Response';
+export * from '../models/ListAccounts200ResponseCursor';
+export * from '../models/ListAccounts200ResponseCursorAllOf';
+export * from '../models/ListAccounts400Response';
+export * from '../models/ListTransactions200Response';
+export * from '../models/ListTransactions200ResponseCursor';
+export * from '../models/ListTransactions200ResponseCursorAllOf';
+export * from '../models/Mapping';
+export * from '../models/MappingResponse';
+export * from '../models/Posting';
+export * from '../models/RunScript400Response';
+export * from '../models/Script';
+export * from '../models/ScriptResult';
+export * from '../models/Stats';
+export * from '../models/StatsResponse';
+export * from '../models/Transaction';
+export * from '../models/TransactionData';
+export * from '../models/TransactionResponse';
+export * from '../models/Transactions';
+export * from '../models/TransactionsResponse';
+export * from '../models/Volume';
 
-import { Account } from './Account';
-import { AccountWithVolumesAndBalances } from './AccountWithVolumesAndBalances';
-import { Config } from './Config';
-import { ConfigInfo } from './ConfigInfo';
-import { ConfigInfoResponse } from './ConfigInfoResponse';
-import { Contract } from './Contract';
-import { CreateTransaction400Response } from './CreateTransaction400Response';
-import { CreateTransaction409Response } from './CreateTransaction409Response';
-import { CreateTransactions400Response } from './CreateTransactions400Response';
-import { Cursor } from './Cursor';
-import { ErrorCode } from './ErrorCode';
-import { ErrorResponse } from './ErrorResponse';
-import { GetAccount200Response } from './GetAccount200Response';
-import { GetAccount400Response } from './GetAccount400Response';
-import { GetBalances200Response } from './GetBalances200Response';
-import { GetBalances200ResponseCursor } from './GetBalances200ResponseCursor';
-import { GetBalances200ResponseCursorAllOf } from './GetBalances200ResponseCursorAllOf';
-import { GetBalancesAggregated200Response } from './GetBalancesAggregated200Response';
-import { GetBalancesAggregated400Response } from './GetBalancesAggregated400Response';
-import { GetTransaction400Response } from './GetTransaction400Response';
-import { GetTransaction404Response } from './GetTransaction404Response';
-import { LedgerStorage } from './LedgerStorage';
-import { ListAccounts200Response } from './ListAccounts200Response';
-import { ListAccounts200ResponseCursor } from './ListAccounts200ResponseCursor';
-import { ListAccounts200ResponseCursorAllOf } from './ListAccounts200ResponseCursorAllOf';
-import { ListAccounts400Response } from './ListAccounts400Response';
-import { ListTransactions200Response } from './ListTransactions200Response';
-import { ListTransactions200ResponseCursor } from './ListTransactions200ResponseCursor';
-import { ListTransactions200ResponseCursorAllOf } from './ListTransactions200ResponseCursorAllOf';
-import { Mapping } from './Mapping';
-import { MappingResponse } from './MappingResponse';
-import { Posting } from './Posting';
-import { Script } from './Script';
-import { ScriptResult , ScriptResultErrorCodeEnum     } from './ScriptResult';
-import { Stats } from './Stats';
-import { StatsResponse } from './StatsResponse';
-import { Transaction } from './Transaction';
-import { TransactionData } from './TransactionData';
-import { TransactionResponse } from './TransactionResponse';
-import { Transactions } from './Transactions';
-import { TransactionsResponse } from './TransactionsResponse';
-import { Volume } from './Volume';
+import { Account } from '../models/Account';
+import { AccountWithVolumesAndBalances } from '../models/AccountWithVolumesAndBalances';
+import { AddMetadataToAccount409Response } from '../models/AddMetadataToAccount409Response';
+import { Config } from '../models/Config';
+import { ConfigInfo } from '../models/ConfigInfo';
+import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
+import { Contract } from '../models/Contract';
+import { CreateTransaction400Response } from '../models/CreateTransaction400Response';
+import { CreateTransaction409Response } from '../models/CreateTransaction409Response';
+import { CreateTransactions400Response } from '../models/CreateTransactions400Response';
+import { Cursor } from '../models/Cursor';
+import { ErrorCode } from '../models/ErrorCode';
+import { ErrorResponse   } from '../models/ErrorResponse';
+import { GetAccount200Response } from '../models/GetAccount200Response';
+import { GetAccount400Response } from '../models/GetAccount400Response';
+import { GetBalances200Response } from '../models/GetBalances200Response';
+import { GetBalances200ResponseCursor } from '../models/GetBalances200ResponseCursor';
+import { GetBalances200ResponseCursorAllOf } from '../models/GetBalances200ResponseCursorAllOf';
+import { GetBalancesAggregated200Response } from '../models/GetBalancesAggregated200Response';
+import { GetBalancesAggregated400Response } from '../models/GetBalancesAggregated400Response';
+import { GetTransaction400Response } from '../models/GetTransaction400Response';
+import { GetTransaction404Response } from '../models/GetTransaction404Response';
+import { LedgerStorage } from '../models/LedgerStorage';
+import { ListAccounts200Response } from '../models/ListAccounts200Response';
+import { ListAccounts200ResponseCursor } from '../models/ListAccounts200ResponseCursor';
+import { ListAccounts200ResponseCursorAllOf } from '../models/ListAccounts200ResponseCursorAllOf';
+import { ListAccounts400Response } from '../models/ListAccounts400Response';
+import { ListTransactions200Response } from '../models/ListTransactions200Response';
+import { ListTransactions200ResponseCursor } from '../models/ListTransactions200ResponseCursor';
+import { ListTransactions200ResponseCursorAllOf } from '../models/ListTransactions200ResponseCursorAllOf';
+import { Mapping } from '../models/Mapping';
+import { MappingResponse } from '../models/MappingResponse';
+import { Posting } from '../models/Posting';
+import { RunScript400Response } from '../models/RunScript400Response';
+import { Script } from '../models/Script';
+import { ScriptResult , ScriptResultErrorCodeEnum     } from '../models/ScriptResult';
+import { Stats } from '../models/Stats';
+import { StatsResponse } from '../models/StatsResponse';
+import { Transaction } from '../models/Transaction';
+import { TransactionData } from '../models/TransactionData';
+import { TransactionResponse } from '../models/TransactionResponse';
+import { Transactions } from '../models/Transactions';
+import { TransactionsResponse } from '../models/TransactionsResponse';
+import { Volume } from '../models/Volume';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
@@ -111,6 +115,7 @@ let enumsMap: Set<string> = new Set<string>([
 let typeMap: {[index: string]: any} = {
     "Account": Account,
     "AccountWithVolumesAndBalances": AccountWithVolumesAndBalances,
+    "AddMetadataToAccount409Response": AddMetadataToAccount409Response,
     "Config": Config,
     "ConfigInfo": ConfigInfo,
     "ConfigInfoResponse": ConfigInfoResponse,
@@ -140,6 +145,7 @@ let typeMap: {[index: string]: any} = {
     "Mapping": Mapping,
     "MappingResponse": MappingResponse,
     "Posting": Posting,
+    "RunScript400Response": RunScript400Response,
     "Script": Script,
     "ScriptResult": ScriptResult,
     "Stats": Stats,
@@ -265,7 +271,10 @@ export class ObjectSerializer {
             let attributeTypes = typeMap[type].getAttributeTypeMap();
             for (let index in attributeTypes) {
                 let attributeType = attributeTypes[index];
-                instance[attributeType.name] = ObjectSerializer.deserialize(data[attributeType.baseName], attributeType.type, attributeType.format);
+                let value = ObjectSerializer.deserialize(data[attributeType.baseName], attributeType.type, attributeType.format);
+                if (value !== undefined) {
+                    instance[attributeType.name] = value;
+                }
             }
             return instance;
         }
@@ -318,6 +327,10 @@ export class ObjectSerializer {
      * Convert data to a string according the given media type
      */
     public static stringify(data: any, mediaType: string): string {
+        if (mediaType === "text/plain") {
+            return String(data);
+        }
+
         if (mediaType === "application/json") {
             return JSON.stringify(data);
         }
@@ -333,8 +346,16 @@ export class ObjectSerializer {
             throw new Error("Cannot parse content. No Content-Type defined.");
         }
 
+        if (mediaType === "text/plain") {
+            return rawData;
+        }
+
         if (mediaType === "application/json") {
             return JSON.parse(rawData);
+        }
+
+        if (mediaType === "text/html") {
+            return rawData;
         }
 
         throw new Error("The mediaType " + mediaType + " is not supported by ObjectSerializer.parse.");

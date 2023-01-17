@@ -1,5 +1,5 @@
 // TODO: better import syntax?
-import {BaseAPIRequestFactory, RequiredError} from './baseapi';
+import {BaseAPIRequestFactory, RequiredError, COLLECTION_FORMATS} from './baseapi';
 import {Configuration} from '../configuration';
 import {RequestContext, HttpMethod, ResponseContext, HttpFile} from '../http/http';
 import * as FormData from "form-data";
@@ -10,6 +10,7 @@ import {canConsumeForm, isCodeInRange} from '../util';
 import {SecurityAuthentication} from '../auth/auth';
 
 
+import { AddMetadataToAccount409Response } from '../models/AddMetadataToAccount409Response';
 import { GetAccount200Response } from '../models/GetAccount200Response';
 import { GetAccount400Response } from '../models/GetAccount400Response';
 import { ListAccounts200Response } from '../models/ListAccounts200Response';
@@ -287,7 +288,14 @@ export class AccountsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetAccount400Response", ""
             ) as GetAccount400Response;
-            throw new ApiException<GetAccount400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<GetAccount400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
+        }
+        if (isCodeInRange("409", response.httpStatusCode)) {
+            const body: AddMetadataToAccount409Response = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "AddMetadataToAccount409Response", ""
+            ) as AddMetadataToAccount409Response;
+            throw new ApiException<AddMetadataToAccount409Response>(response.httpStatusCode, "Conflict", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -348,7 +356,7 @@ export class AccountsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "GetAccount400Response", ""
             ) as GetAccount400Response;
-            throw new ApiException<GetAccount400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<GetAccount400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -384,7 +392,7 @@ export class AccountsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "ListAccounts400Response", ""
             ) as ListAccounts400Response;
-            throw new ApiException<ListAccounts400Response>(400, "Bad Request", body, response.headers);
+            throw new ApiException<ListAccounts400Response>(response.httpStatusCode, "Bad Request", body, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

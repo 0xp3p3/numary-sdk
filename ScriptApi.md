@@ -1,4 +1,4 @@
-# ScriptApi
+# ledger.ScriptApi
 
 All URIs are relative to *https://.o.numary.cloud/ledger*
 
@@ -15,13 +15,17 @@ Method | HTTP request | Description
 
 
 ```typescript
-import { ScriptApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new ScriptApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.ScriptApi(configuration);
 
-apiInstance.runScript("ledger001",  {
+let body:ledger.ScriptApiRunScriptRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // Script
+  script: {
     reference: "order_1234",
     metadata: {
       "key": null,
@@ -35,7 +39,12 @@ send [COIN 10] (
 )
 `,
     vars: {},
-  },  true ).then((data:any) => {
+  },
+  // boolean | Set the preview mode. Preview mode doesn't add the logs to the database or publish a message to the message broker. (optional)
+  preview: true,
+};
+
+apiInstance.runScript(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -68,6 +77,8 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | OK |  -  |
+**400** | Bad Request |  -  |
+**409** | Conflict |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 

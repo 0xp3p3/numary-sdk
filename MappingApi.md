@@ -1,4 +1,4 @@
-# MappingApi
+# ledger.MappingApi
 
 All URIs are relative to *https://.o.numary.cloud/ledger*
 
@@ -16,13 +16,18 @@ Method | HTTP request | Description
 
 
 ```typescript
-import { MappingApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new MappingApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.MappingApi(configuration);
 
-apiInstance.getMapping("ledger001" ).then((data:any) => {
+let body:ledger.MappingApiGetMappingRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+};
+
+apiInstance.getMapping(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -64,20 +69,27 @@ Name | Type | Description  | Notes
 
 
 ```typescript
-import { MappingApi, createConfiguration } from '@numaryhq/ledger-nodejs';
+import { ledger } from '@numaryhq/ledger-nodejs';
 import * as fs from 'fs';
 
-const configuration = createConfiguration();
-const apiInstance = new MappingApi(configuration);
+const configuration = ledger.createConfiguration();
+const apiInstance = new ledger.MappingApi(configuration);
 
-apiInstance.updateMapping("ledger001",  {
+let body:ledger.MappingApiUpdateMappingRequest = {
+  // string | Name of the ledger.
+  ledger: "ledger001",
+  // Mapping
+  mapping: {
     contracts: [
       {
         account: "users:001",
         expr: {},
       },
     ],
-  } ).then((data:any) => {
+  },
+};
+
+apiInstance.updateMapping(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
