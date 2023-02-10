@@ -1,90 +1,80 @@
 export * from '../models/Account';
+export * from '../models/AccountResponse';
 export * from '../models/AccountWithVolumesAndBalances';
-export * from '../models/AddMetadataToAccount409Response';
+export * from '../models/AccountsCursorResponse';
+export * from '../models/AccountsCursorResponseCursor';
+export * from '../models/AggregateBalancesResponse';
+export * from '../models/BalancesCursorResponse';
+export * from '../models/BalancesCursorResponseCursor';
 export * from '../models/Config';
 export * from '../models/ConfigInfo';
 export * from '../models/ConfigInfoResponse';
 export * from '../models/Contract';
-export * from '../models/CreateTransaction400Response';
-export * from '../models/CreateTransaction409Response';
-export * from '../models/CreateTransactions400Response';
-export * from '../models/Cursor';
-export * from '../models/ErrorCode';
 export * from '../models/ErrorResponse';
-export * from '../models/GetAccount200Response';
-export * from '../models/GetAccount400Response';
-export * from '../models/GetBalances200Response';
-export * from '../models/GetBalances200ResponseCursor';
-export * from '../models/GetBalances200ResponseCursorAllOf';
-export * from '../models/GetBalancesAggregated200Response';
-export * from '../models/GetBalancesAggregated400Response';
-export * from '../models/GetTransaction400Response';
-export * from '../models/GetTransaction404Response';
+export * from '../models/ErrorsEnum';
+export * from '../models/LedgerInfo';
+export * from '../models/LedgerInfoResponse';
+export * from '../models/LedgerInfoStorage';
 export * from '../models/LedgerStorage';
-export * from '../models/ListAccounts200Response';
-export * from '../models/ListAccounts200ResponseCursor';
-export * from '../models/ListAccounts200ResponseCursorAllOf';
-export * from '../models/ListAccounts400Response';
-export * from '../models/ListTransactions200Response';
-export * from '../models/ListTransactions200ResponseCursor';
-export * from '../models/ListTransactions200ResponseCursorAllOf';
+export * from '../models/Log';
+export * from '../models/LogsCursorResponse';
+export * from '../models/LogsCursorResponseCursor';
 export * from '../models/Mapping';
 export * from '../models/MappingResponse';
+export * from '../models/MigrationInfo';
+export * from '../models/PostTransaction';
+export * from '../models/PostTransactionScript';
 export * from '../models/Posting';
-export * from '../models/RunScript400Response';
 export * from '../models/Script';
-export * from '../models/ScriptResult';
+export * from '../models/ScriptResponse';
 export * from '../models/Stats';
 export * from '../models/StatsResponse';
 export * from '../models/Transaction';
 export * from '../models/TransactionData';
 export * from '../models/TransactionResponse';
 export * from '../models/Transactions';
+export * from '../models/TransactionsCursorResponse';
+export * from '../models/TransactionsCursorResponseCursor';
 export * from '../models/TransactionsResponse';
 export * from '../models/Volume';
 
 import { Account } from '../models/Account';
+import { AccountResponse } from '../models/AccountResponse';
 import { AccountWithVolumesAndBalances } from '../models/AccountWithVolumesAndBalances';
-import { AddMetadataToAccount409Response } from '../models/AddMetadataToAccount409Response';
+import { AccountsCursorResponse } from '../models/AccountsCursorResponse';
+import { AccountsCursorResponseCursor } from '../models/AccountsCursorResponseCursor';
+import { AggregateBalancesResponse } from '../models/AggregateBalancesResponse';
+import { BalancesCursorResponse } from '../models/BalancesCursorResponse';
+import { BalancesCursorResponseCursor } from '../models/BalancesCursorResponseCursor';
 import { Config } from '../models/Config';
 import { ConfigInfo } from '../models/ConfigInfo';
 import { ConfigInfoResponse } from '../models/ConfigInfoResponse';
 import { Contract } from '../models/Contract';
-import { CreateTransaction400Response } from '../models/CreateTransaction400Response';
-import { CreateTransaction409Response } from '../models/CreateTransaction409Response';
-import { CreateTransactions400Response } from '../models/CreateTransactions400Response';
-import { Cursor } from '../models/Cursor';
-import { ErrorCode } from '../models/ErrorCode';
-import { ErrorResponse   } from '../models/ErrorResponse';
-import { GetAccount200Response } from '../models/GetAccount200Response';
-import { GetAccount400Response } from '../models/GetAccount400Response';
-import { GetBalances200Response } from '../models/GetBalances200Response';
-import { GetBalances200ResponseCursor } from '../models/GetBalances200ResponseCursor';
-import { GetBalances200ResponseCursorAllOf } from '../models/GetBalances200ResponseCursorAllOf';
-import { GetBalancesAggregated200Response } from '../models/GetBalancesAggregated200Response';
-import { GetBalancesAggregated400Response } from '../models/GetBalancesAggregated400Response';
-import { GetTransaction400Response } from '../models/GetTransaction400Response';
-import { GetTransaction404Response } from '../models/GetTransaction404Response';
+import { ErrorResponse    } from '../models/ErrorResponse';
+import { ErrorsEnum } from '../models/ErrorsEnum';
+import { LedgerInfo } from '../models/LedgerInfo';
+import { LedgerInfoResponse } from '../models/LedgerInfoResponse';
+import { LedgerInfoStorage } from '../models/LedgerInfoStorage';
 import { LedgerStorage } from '../models/LedgerStorage';
-import { ListAccounts200Response } from '../models/ListAccounts200Response';
-import { ListAccounts200ResponseCursor } from '../models/ListAccounts200ResponseCursor';
-import { ListAccounts200ResponseCursorAllOf } from '../models/ListAccounts200ResponseCursorAllOf';
-import { ListAccounts400Response } from '../models/ListAccounts400Response';
-import { ListTransactions200Response } from '../models/ListTransactions200Response';
-import { ListTransactions200ResponseCursor } from '../models/ListTransactions200ResponseCursor';
-import { ListTransactions200ResponseCursorAllOf } from '../models/ListTransactions200ResponseCursorAllOf';
+import { Log , LogTypeEnum      } from '../models/Log';
+import { LogsCursorResponse } from '../models/LogsCursorResponse';
+import { LogsCursorResponseCursor } from '../models/LogsCursorResponseCursor';
 import { Mapping } from '../models/Mapping';
 import { MappingResponse } from '../models/MappingResponse';
+import { MigrationInfo   , MigrationInfoStateEnum   } from '../models/MigrationInfo';
+import { PostTransaction } from '../models/PostTransaction';
+import { PostTransactionScript } from '../models/PostTransactionScript';
 import { Posting } from '../models/Posting';
-import { RunScript400Response } from '../models/RunScript400Response';
 import { Script } from '../models/Script';
-import { ScriptResult , ScriptResultErrorCodeEnum     } from '../models/ScriptResult';
+import { ScriptResponse     } from '../models/ScriptResponse';
 import { Stats } from '../models/Stats';
 import { StatsResponse } from '../models/StatsResponse';
 import { Transaction } from '../models/Transaction';
 import { TransactionData } from '../models/TransactionData';
 import { TransactionResponse } from '../models/TransactionResponse';
 import { Transactions } from '../models/Transactions';
+import { TransactionsCursorResponse } from '../models/TransactionsCursorResponse';
+import { TransactionsCursorResponseCursor } from '../models/TransactionsCursorResponseCursor';
 import { TransactionsResponse } from '../models/TransactionsResponse';
 import { Volume } from '../models/Volume';
 
@@ -108,52 +98,48 @@ const supportedMediaTypes: { [mediaType: string]: number } = {
 
 
 let enumsMap: Set<string> = new Set<string>([
-    "ErrorCode",
-    "ScriptResultErrorCodeEnum",
+    "ErrorsEnum",
+    "LogTypeEnum",
+    "MigrationInfoStateEnum",
 ]);
 
 let typeMap: {[index: string]: any} = {
     "Account": Account,
+    "AccountResponse": AccountResponse,
     "AccountWithVolumesAndBalances": AccountWithVolumesAndBalances,
-    "AddMetadataToAccount409Response": AddMetadataToAccount409Response,
+    "AccountsCursorResponse": AccountsCursorResponse,
+    "AccountsCursorResponseCursor": AccountsCursorResponseCursor,
+    "AggregateBalancesResponse": AggregateBalancesResponse,
+    "BalancesCursorResponse": BalancesCursorResponse,
+    "BalancesCursorResponseCursor": BalancesCursorResponseCursor,
     "Config": Config,
     "ConfigInfo": ConfigInfo,
     "ConfigInfoResponse": ConfigInfoResponse,
     "Contract": Contract,
-    "CreateTransaction400Response": CreateTransaction400Response,
-    "CreateTransaction409Response": CreateTransaction409Response,
-    "CreateTransactions400Response": CreateTransactions400Response,
-    "Cursor": Cursor,
     "ErrorResponse": ErrorResponse,
-    "GetAccount200Response": GetAccount200Response,
-    "GetAccount400Response": GetAccount400Response,
-    "GetBalances200Response": GetBalances200Response,
-    "GetBalances200ResponseCursor": GetBalances200ResponseCursor,
-    "GetBalances200ResponseCursorAllOf": GetBalances200ResponseCursorAllOf,
-    "GetBalancesAggregated200Response": GetBalancesAggregated200Response,
-    "GetBalancesAggregated400Response": GetBalancesAggregated400Response,
-    "GetTransaction400Response": GetTransaction400Response,
-    "GetTransaction404Response": GetTransaction404Response,
+    "LedgerInfo": LedgerInfo,
+    "LedgerInfoResponse": LedgerInfoResponse,
+    "LedgerInfoStorage": LedgerInfoStorage,
     "LedgerStorage": LedgerStorage,
-    "ListAccounts200Response": ListAccounts200Response,
-    "ListAccounts200ResponseCursor": ListAccounts200ResponseCursor,
-    "ListAccounts200ResponseCursorAllOf": ListAccounts200ResponseCursorAllOf,
-    "ListAccounts400Response": ListAccounts400Response,
-    "ListTransactions200Response": ListTransactions200Response,
-    "ListTransactions200ResponseCursor": ListTransactions200ResponseCursor,
-    "ListTransactions200ResponseCursorAllOf": ListTransactions200ResponseCursorAllOf,
+    "Log": Log,
+    "LogsCursorResponse": LogsCursorResponse,
+    "LogsCursorResponseCursor": LogsCursorResponseCursor,
     "Mapping": Mapping,
     "MappingResponse": MappingResponse,
+    "MigrationInfo": MigrationInfo,
+    "PostTransaction": PostTransaction,
+    "PostTransactionScript": PostTransactionScript,
     "Posting": Posting,
-    "RunScript400Response": RunScript400Response,
     "Script": Script,
-    "ScriptResult": ScriptResult,
+    "ScriptResponse": ScriptResponse,
     "Stats": Stats,
     "StatsResponse": StatsResponse,
     "Transaction": Transaction,
     "TransactionData": TransactionData,
     "TransactionResponse": TransactionResponse,
     "Transactions": Transactions,
+    "TransactionsCursorResponse": TransactionsCursorResponse,
+    "TransactionsCursorResponseCursor": TransactionsCursorResponseCursor,
     "TransactionsResponse": TransactionsResponse,
     "Volume": Volume,
 }

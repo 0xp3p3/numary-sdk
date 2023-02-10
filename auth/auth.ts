@@ -1,6 +1,3 @@
-// typings for btoa are incorrect
-//@ts-ignore
-import * as btoa from "btoa";
 import { RequestContext } from "../http/http";
 
 /**
@@ -24,35 +21,9 @@ export interface TokenProvider {
   getToken(): Promise<string> | string;
 }
 
-/**
- * Applies http authentication to the request context.
- */
-export class BasicAuthAuthentication implements SecurityAuthentication {
-    /**
-     * Configures the http authentication with the required details.
-     *
-     * @param username username for http basic authentication
-     * @param password password for http basic authentication
-     */
-    public constructor(
-        private username: string,
-        private password: string
-    ) {}
-
-    public getName(): string {
-        return "basicAuth";
-    }
-
-    public applySecurityAuthentication(context: RequestContext) {
-        let comb = this.username + ":" + this.password;
-        context.setHeaderParam("Authorization", "Basic " + btoa(comb));
-    }
-}
-
 
 export type AuthMethods = {
     "default"?: SecurityAuthentication,
-    "basicAuth"?: SecurityAuthentication
 }
 
 export type ApiKeyConfiguration = string;
@@ -62,7 +33,6 @@ export type OAuth2Configuration = { accessToken: string };
 
 export type AuthMethodsConfiguration = {
     "default"?: SecurityAuthentication,
-    "basicAuth"?: HttpBasicConfiguration
 }
 
 /**
@@ -76,13 +46,6 @@ export function configureAuthMethods(config: AuthMethodsConfiguration | undefine
         return authMethods;
     }
     authMethods["default"] = config["default"]
-
-    if (config["basicAuth"]) {
-        authMethods["basicAuth"] = new BasicAuthAuthentication(
-            config["basicAuth"]["username"],
-            config["basicAuth"]["password"]
-        );
-    }
 
     return authMethods;
 }
