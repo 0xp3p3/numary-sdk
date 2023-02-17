@@ -1,11 +1,11 @@
 {
   "name": "@numaryhq/ledger-nodejs",
-  "version": "v1.8.1",
+  "version": "v1.9.0-rc.11",
   "description": "OpenAPI client for @numaryhq/ledger-nodejs",
   "author": "OpenAPI-Generator Contributors",
   "repository": {
     "type": "git",
-    "url": "https://github.com/numary/numary-sdk-typescript-node.git"
+    "url": "https://github.com/formancehq/numary-sdk-typescript-node.git"
   },
   "keywords": [
     "fetch",
@@ -29,7 +29,6 @@
     "@types/node-fetch": "^2.5.7",
     "@types/node": "*",
     "form-data": "^2.5.0",
-    "btoa": "^1.2.1",
     "es6-promise": "^4.2.4",
     "url-parse": "^1.4.3"
   },

@@ -1,16 +1,16 @@
 # ledger.StatsApi
 
-All URIs are relative to *https://.o.numary.cloud/ledger*
+All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**readStats**](StatsApi.md#readStats) | **GET** /{ledger}/stats | Get Stats
+[**readStats**](StatsApi.md#readStats) | **GET** /{ledger}/stats | Get statistics from a ledger
 
 
 # **readStats**
 > StatsResponse readStats()
 
-Get ledger stats (aggregate metrics on accounts and transactions) The stats for account 
+Get statistics from a ledger. (aggregate metrics on accounts and transactions) 
 
 ### Example
 
@@ -46,7 +46,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[basicAuth](README.md#basicAuth)
+No authorization required
 
 ### HTTP request headers
 
@@ -58,6 +58,7 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | OK |  -  |
+**0** | Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
