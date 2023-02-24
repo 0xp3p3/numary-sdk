@@ -35,5 +35,8 @@
   "devDependencies": {
     "typescript": "^4.0",
     "@types/url-parse": "1.4.4"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
